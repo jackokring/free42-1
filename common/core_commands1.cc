@@ -651,7 +651,7 @@ int docmd_clsigma(arg_struct *arg) {
     vartype *regs = recall_var("REGS", 4);
     vartype_realmatrix *r;
     int4 first = mode_sigma_reg;
-    int4 last = first + (flags.f.all_sigma ? 13 : 6);
+    int4 last = first + (flags.f.all_sigma ? 14 : 6);
     int4 size, i;
     if (regs == NULL)
         return ERR_SIZE_ERROR;

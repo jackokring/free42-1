@@ -764,6 +764,26 @@ int docmd_sdev(arg_struct *arg) {
     return ERR_NONE;
 }
 
+int docmd_wsd(arg_struct *arg) {
+    phloat wsd;
+    int inf;
+    vartype *v;
+    int err = get_summation();
+    if (err != ERR_NONE)
+        return err;
+    if (sum.y == 0)
+        return ERR_STAT_MATH_ERROR;
+    wsd = (sum.x2y - (sum.xy * sum.xy / sum.y)) / (sum.y - 1);
+    if (p_isinf(wsd))
+        v = new_real(POS_HUGE_PHLOAT);
+    else
+        v = new_real(sqrt(wsd));
+    if (v == NULL)
+        return ERR_INSUFFICIENT_MEMORY;
+    recall_result(v);
+    return ERR_NONE;
+}
+
 int docmd_slope(arg_struct *arg) {
     int err = get_model_summation(get_model());
     vartype *v;
