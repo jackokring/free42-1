@@ -390,12 +390,13 @@ static struct sum_struct {
     phloat lnxlny;
     phloat xlny;
     phloat ylnx;
+    phloat x2y;
 } sum;
 
 static int get_summation() {
     /* Check if summation registers are OK */
     int4 first = mode_sigma_reg;
-    int4 last = first + (flags.f.all_sigma ? 13 : 6);
+    int4 last = first + (flags.f.all_sigma ? 14 : 6);
     int4 size, i;
     vartype *regs = recall_var("REGS", 4);
     vartype_realmatrix *r;
@@ -426,6 +427,7 @@ static int get_summation() {
         sum.lnxlny = sigmaregs[10];
         sum.xlny = sigmaregs[11];
         sum.ylnx = sigmaregs[12];
+        sum.x2y = sigmaregs[13];
     }
     return ERR_NONE;
 }
@@ -1232,6 +1234,7 @@ static phloat sigma_helper_2(phloat *sigmaregs,
     accum(&sigmaregs[3], y * y, weight);
     accum(&sigmaregs[4], x * y, weight);
     accum(&sigmaregs[5], 1, weight);
+    accum(&sigmaregs[13], x * x * y, weight);
 
     if (flags.f.all_sigma) {
         if (x > 0) {
@@ -1272,7 +1275,7 @@ static phloat sigma_helper_2(phloat *sigmaregs,
 static int sigma_helper_1(int weight) {
     /* Check if summation registers are OK */
     int4 first = mode_sigma_reg;
-    int4 last = first + (flags.f.all_sigma ? 13 : 6);
+    int4 last = first + (flags.f.all_sigma ? 14 : 6);
     int4 size, i;
     vartype *regs = recall_var("REGS", 4);
     vartype_realmatrix *r;
