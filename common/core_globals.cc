@@ -433,7 +433,7 @@ menu_spec menus[] = {
                       { { 0x2000 + CMD_ALLSIGMA,   0, "" },
                         { 0x2000 + CMD_LINSIGMA,   0, "" },
                         { 0x1000 + CMD_NULL,       0, "" },
-                        { 0x1000 + CMD_NULL,       0, "" },
+                        { 0x1000 + CMD_WSD,        0, "" },
                         { 0x1000 + CMD_SIGMAREG,   0, "" },
                         { 0x1000 + CMD_SIGMAREG_T, 0, "" } } },
     { /* MENU_STAT_CFIT */ MENU_STAT1, MENU_NONE, MENU_NONE,

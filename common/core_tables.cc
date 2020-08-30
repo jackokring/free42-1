@@ -380,7 +380,8 @@ static const command_spec cmd_array[] =
     { /* DELP */        "DELP",                 4, docmd_xrom,        0x0000a7ce, ARG_NONE,  FLAG_NONE },
 
     /* Byron Foster's DROP for Bigstack (Obsolete) */
-    { /* DROP */        "DROP",                 4, docmd_xrom,        0x0000a271, ARG_NONE,  FLAG_NONE },
+    //replaced by WSD
+    { /* WSD */         "WSD",                  3, docmd_wsd,         0x0000a271, ARG_NONE,  FLAG_NONE },
 
     /* Accelerometer, GPS, and compass support */
     { /* ACCEL */       "ACCEL",                5, docmd_accel,       0x0000a7cf, ARG_NONE,  FLAG_NONE },

@@ -47,7 +47,7 @@ int docmd_slope(arg_struct *arg);
 int docmd_sum(arg_struct *arg);
 int docmd_wmean(arg_struct *arg);
 int docmd_yint(arg_struct *arg);
-
+int docmd_wsd(arg_struct *arg);
 int docmd_integ(arg_struct *arg);
 int docmd_linsigma(arg_struct *arg);
 int docmd_not(arg_struct *arg);

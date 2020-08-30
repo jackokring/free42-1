@@ -366,7 +366,8 @@
 #define CMD_PUTZ        327
 #define CMD_DELP        328
 /* Byron Foster's Bigstack extension (Obsolete) */
-#define CMD_DROP        329
+//replaced by WSD weighted standard deviation (population) 
+#define CMD_WSD         329
 /* iPhone hardware support */
 #define CMD_ACCEL       330
 #define CMD_LOCAT       331

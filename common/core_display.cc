@@ -1485,6 +1485,7 @@ static extension_struct extensions[] = {
     { CMD_ADATE,   CMD_SWPT,    &core_settings.enable_ext_time     },
     { CMD_FPTEST,  CMD_FPTEST,  &core_settings.enable_ext_fptest   },
     { CMD_LSTO,    CMD_BRESET,  &core_settings.enable_ext_prog     },
+    { CMD_WSD,     CMD_WSD,     NULL                               },
     { CMD_NULL,    CMD_NULL,    NULL                               }
 };
 
@@ -1500,7 +1501,7 @@ static int ext_fcn_cat[] = {
     CMD_BRESET, CMD_BSIGNED, CMD_BWRAP,
     CMD_LSTO, -1, CMD_WSIZE_T,
     CMD_ACCEL, CMD_LOCAT, CMD_HEADING,
-    CMD_FPTEST,
+    CMD_FPTEST, CMD_WSD,
     CMD_NULL
 };
 
