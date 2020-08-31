@@ -741,19 +741,21 @@ static int mappable_fcstx(phloat x, phloat *y) {
             return ERR_INVALID_FORECAST_MODEL;
         x = log(x);
     }
-    if (model.slope == 0)
-        return ERR_STAT_MATH_ERROR;
     if(flags.f.q_fit) {
-        phloat r1, r2;
-        r2 = model.qslope * model.qslope - 4 * model.quad * (model.qyint - x);
-        if (model.quad == 0 || r2 < 0)
+        phloat r1;
+        r1 = model.qslope * model.qslope - 4 * model.quad * (model.qyint - x);
+        if (model.quad == 0 || r1 < 0)
             return ERR_STAT_MATH_ERROR;
-        r2 = sqrt(r2);
-        r1 = (-model.qslope + r2) / (2 * model.quad);
-        r2 = (-model.qslope - r2) / (2 * model.quad);
+        r1 = sqrt(r1);
         /* choice logic */
-
+        if(model.quad * model.slope > 0) {//positive if max root
+            x = (-model.qslope + r1) / (2 * model.quad);
+        } else {
+            x = (-model.qslope - r1) / (2 * model.quad);
+        }
     } else {
+        if (model.slope == 0)
+            return ERR_STAT_MATH_ERROR;
         x = (x - model.yint) / model.slope;
     }
     if (model.ln_before)
