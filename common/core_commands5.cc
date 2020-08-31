@@ -1254,9 +1254,9 @@ static phloat sigma_helper_2(phloat *sigmaregs,
     accum(&sigmaregs[3], y * y, weight);
     accum(&sigmaregs[4], x * y, weight);
     accum(&sigmaregs[5], 1, weight);
-    accum(&sigmaregs[13], x * x * y, weight);
 
     if (flags.f.all_sigma) {
+        accum(&sigmaregs[13], x * x * y, weight);//clobber fix
         if (x > 0) {
             phloat lnx = log(x);
             if (y > 0) {
