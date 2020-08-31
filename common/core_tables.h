@@ -351,7 +351,8 @@
 #define CMD_FIND        313
 #define CMD_XROM        314
 /* Underhill's COPAN extensions (Obsolete) */
-#define CMD_OPENF       315
+//replaced by other things
+#define CMD_QSIGMA      315
 #define CMD_CLOSEF      316
 #define CMD_READP       317
 #define CMD_WRITEP      318

@@ -432,7 +432,7 @@ menu_spec menus[] = {
     { /* MENU_STAT2 */ MENU_NONE, MENU_STAT1, MENU_STAT1,
                       { { 0x2000 + CMD_ALLSIGMA,   0, "" },
                         { 0x2000 + CMD_LINSIGMA,   0, "" },
-                        { 0x1000 + CMD_NULL,       0, "" },
+                        { 0x2000 + CMD_QSIGMA,     0, "" },
                         { 0x1000 + CMD_WSD,        0, "" },
                         { 0x1000 + CMD_SIGMAREG,   0, "" },
                         { 0x1000 + CMD_SIGMAREG_T, 0, "" } } },

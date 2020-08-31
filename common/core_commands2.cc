@@ -1202,7 +1202,15 @@ static const sigma_label_spec sigma_labels[] = {
     { "\005LN(X)LN(Y)=", 12 },
     { "\005XLN(Y)=",      8 },
     { "\005YLN(X)=",      8 },
-    { "\005X^2Y=",        6 }
+    { "\005YX^2=",        6 },
+    /* quad stats */
+    { "\005X^3=",         5 },
+    { "\005X^4=",         5 },
+    { "\005LN(X)^3=",     9 },
+    { "\005LN(X)^4=",     9 },
+    { "\005YLN(X)^2=",   10 },
+    { "\005LN(Y)X^2=",   10 },
+    { "\005LN(Y)LN(X)^2=", 14 },
 };
 
 int docmd_prsigma(arg_struct *arg) {
@@ -1219,6 +1227,7 @@ int docmd_prsigma(arg_struct *arg) {
         return ERR_INVALID_TYPE;
     rm = (vartype_realmatrix *) regs;
     nr = flags.f.all_sigma ? 14 : 6;
+    nr = flags.f.q_sigma ? 14 + 7 : nr;
     size = rm->rows * rm->columns;
     max = mode_sigma_reg + nr;
     if (max > size)

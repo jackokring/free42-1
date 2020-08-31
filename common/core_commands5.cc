@@ -106,6 +106,13 @@ int docmd_pwrf(arg_struct *arg) {
 
 int docmd_allsigma(arg_struct *arg) {
     flags.f.all_sigma = 1;
+    flags.f.q_sigma = 0;
+    return ERR_NONE;
+}
+
+int docmd_qsigma(arg_struct *arg) {
+    if(flags.f.all_sigma)
+        flags.f.q_sigma = !flags.f.q_sigma;
     return ERR_NONE;
 }
 
@@ -895,6 +902,7 @@ int docmd_integ(arg_struct *arg) {
 
 int docmd_linsigma(arg_struct *arg) {
     flags.f.all_sigma = 0;
+    flags.f.q_sigma = 0;
     return ERR_NONE;
 }
 
@@ -1270,6 +1278,10 @@ static phloat sigma_helper_2(phloat *sigmaregs,
 
     if (flags.f.all_sigma) {
         accum(&sigmaregs[13], x * x * y, weight);//clobber fix
+        if(flags.f.q_sigma) {
+            accum(&sigmaregs[14], x * x * x, weight);
+            accum(&sigmaregs[15], x * x * x * x, weight);
+        }
         if (x > 0) {
             phloat lnx = log(x);
             if (y > 0) {
@@ -1278,6 +1290,9 @@ static phloat sigma_helper_2(phloat *sigmaregs,
                 accum(&sigmaregs[9], lny * lny, weight);
                 accum(&sigmaregs[10], lnx * lny, weight);
                 accum(&sigmaregs[11], x * lny, weight);
+                if(flags.f.q_sigma) {
+                    accum(&sigmaregs[20], lnx * lnx * lny, weight);
+                }
             } else {
                 flags.f.exp_fit_invalid = 1;
                 flags.f.pwr_fit_invalid = 1;
@@ -1285,12 +1300,20 @@ static phloat sigma_helper_2(phloat *sigmaregs,
             accum(&sigmaregs[6], lnx, weight);
             accum(&sigmaregs[7], lnx * lnx, weight);
             accum(&sigmaregs[12], lnx * y, weight);
+            if(flags.f.q_sigma) {
+                accum(&sigmaregs[16], lnx * lnx * lnx, weight);
+                accum(&sigmaregs[17], lnx * lnx * lnx * lnx, weight);
+                accum(&sigmaregs[18], lnx * lnx * y, weight);
+            }
         } else {
             if (y > 0) {
                 phloat lny = log(y);
                 accum(&sigmaregs[8], lny, weight);
                 accum(&sigmaregs[9], lny * lny, weight);
                 accum(&sigmaregs[11], x * lny, weight);
+                if(flags.f.q_sigma) {
+                    accum(&sigmaregs[19], x * x * lny, weight);
+                }
             } else
                 flags.f.exp_fit_invalid = 1;
             flags.f.log_fit_invalid = 1;

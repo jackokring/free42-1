@@ -30,6 +30,7 @@ int docmd_logf(arg_struct *arg);
 int docmd_expf(arg_struct *arg);
 int docmd_pwrf(arg_struct *arg);
 int docmd_allsigma(arg_struct *arg);
+int docmd_qsigma(arg_struct *arg);
 int docmd_and(arg_struct *arg);
 int docmd_baseadd(arg_struct *arg);
 int docmd_basesub(arg_struct *arg);

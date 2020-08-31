@@ -1486,6 +1486,7 @@ static extension_struct extensions[] = {
     { CMD_FPTEST,  CMD_FPTEST,  &core_settings.enable_ext_fptest   },
     { CMD_LSTO,    CMD_BRESET,  &core_settings.enable_ext_prog     },
     { CMD_WSD,     CMD_WSD,     NULL                               },
+    { CMD_QSIGMA,  CMD_QSIGMA,  NULL                               },
     { CMD_NULL,    CMD_NULL,    NULL                               }
 };
 
@@ -2079,6 +2080,9 @@ void redisplay() {
                             break;
                         case CMD_LINSIGMA:
                             is_flag = !flags.f.all_sigma;
+                            break;
+                        case CMD_QSIGMA:
+                            is_flag = flags.f.q_sigma;
                             break;
                         case CMD_LINF:
                             is_flag = flags.f.lin_fit;

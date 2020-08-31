@@ -364,7 +364,8 @@ static const command_spec cmd_array[] =
      */
 
     /* Underhill's COPAN (Obsolete) */
-    { /* OPENF */       "OPENF",                5, docmd_xrom,        0x0000a7c1, ARG_NONE,  FLAG_NONE },
+    //replaced by other things
+    { /* QSIGMA */      "Q\005",                5, docmd_qsigma,      0x0000a7c1, ARG_NONE,  FLAG_NONE },
     { /* CLOSF */       "CLOSF",                5, docmd_xrom,        0x0000a7c2, ARG_NONE,  FLAG_NONE },
     { /* READP */       "READP",                5, docmd_xrom,        0x0000a7c3, ARG_NONE,  FLAG_NONE },
     { /* WRITP */       "WRITP",                5, docmd_xrom,        0x0000a7c4, ARG_NONE,  FLAG_NONE },
