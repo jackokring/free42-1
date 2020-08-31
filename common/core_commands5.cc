@@ -25,6 +25,7 @@
 #include "core_math1.h"
 #include "core_sto_rcl.h"
 #include "core_variables.h"
+#include "core_linalg1.h"
 
 /********************************************************/
 /* Implementations of HP-42S built-in functions, part 5 */
@@ -478,6 +479,9 @@ static struct model_struct {
     phloat x2y;
     phloat x3;
     phloat x4;
+    phloat quad;
+    phloat qslope;//as slope sets best x estimate based on local r
+    phloat qyint;//makes easier logic
 } model;
 
 #define MODEL_NONE -1
@@ -556,6 +560,43 @@ static int get_model_summation(int modl) {
     }
     model.n = sum.n;
     return ERR_NONE;
+}
+
+static void matrix_helper2(int error, vartype *result) {
+    vartype_realmatrix *r = (vartype_realmatrix *) result;
+    phloat *data = r->array->data;
+    model.quad = data[0];
+    model.qslope = data[1];
+    model.quad = data[2];
+    free_vartype(result);
+}
+
+static int matrix_helper1() {
+    // caller must call get_model_summation(modl)
+    vartype *sig = new_realmatrix(3, 3);
+    vartype *col = new_realmatrix(1, 3);
+    vartype_realmatrix *r = (vartype_realmatrix *) sig;
+    phloat *data = r->array->data;
+    data[0] = model.x4;
+    data[1] = model.x3;
+    data[2] = model.x2;
+    data[3] = model.x3;
+    data[4] = model.x2;
+    data[5] = model.x;
+    data[6] = model.x2;
+    data[7] = model.x;
+    data[8] = model.n;
+    r = (vartype_realmatrix *) col;
+    data = r->array->data;
+    data[0] = model.x2y;
+    data[1] = model.xy;
+    data[2] = model.y;
+    /* int linalg_div(const vartype *left, const vartype *right,
+                             void (*completion)(int, vartype *)); */
+    int err = linalg_div(col, sig, matrix_helper2);
+    free_vartype(sig);
+    free_vartype(col);
+    return err;
 }
 
 static int corr_helper(int modl, phloat *r) {
