@@ -1503,6 +1503,7 @@ static int ext_fcn_cat[] = {
     CMD_LSTO, -1, CMD_WSIZE_T,
     CMD_ACCEL, CMD_LOCAT, CMD_HEADING,
     CMD_FPTEST, CMD_WSD,
+    CMD_QSIGMA, -1, CMD_QF,
     CMD_NULL
 };
 
