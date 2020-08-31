@@ -391,6 +391,14 @@ static struct sum_struct {
     phloat xlny;
     phloat ylnx;
     phloat x2y;
+    /* quad order */
+    phloat x3;
+    phloat x4;
+    phloat lnx3;
+    phloat lnx4;
+    phloat ylnx2;
+    phloat x2lny;
+    phloat lnx2lny;
 } sum;
 
 static int get_summation() {
@@ -444,6 +452,11 @@ static struct model_struct {
     int valid;
     phloat slope;
     phloat yint;
+    /* quad order */
+    phloat quad;
+    phloat x2y;
+    phloat x3;
+    phloat x4;
 } model;
 
 #define MODEL_NONE -1
