@@ -448,7 +448,7 @@ menu_spec menus[] = {
                         { 0x2000 + CMD_LOGF, 0, "" },
                         { 0x2000 + CMD_EXPF, 0, "" },
                         { 0x2000 + CMD_PWRF, 0, "" },
-                        { 0x1000 + CMD_NULL, 0, "" },
+                        { 0x2000 + CMD_QF,   0, "" },
                         { 0x1000 + CMD_BEST, 0, "" } } },
     { /* MENU_MATRIX1 */ MENU_NONE, MENU_MATRIX2, MENU_MATRIX3,
                       { { 0x1000 + CMD_NEWMAT, 0, "" },
@@ -3668,7 +3668,7 @@ void hard_reset(int reason) {
 
     /* Clear variables */
     purge_all_vars();
-    regs = new_realmatrix(25, 1);
+    regs = new_realmatrix(32, 1);
     store_var("REGS", 4, regs);
 
     /* Clear RTN stack */
@@ -3714,7 +3714,7 @@ void hard_reset(int reason) {
     flags.f.f14 = 0;
     flags.f.trace_print = 0;
     flags.f.normal_print = 0;
-    flags.f.f17 = flags.f.f18 = flags.f.f19 = flags.f.f20 = 0;
+    flags.f.f17 = flags.f.f18 = flags.f.q_fit = flags.f.q_sigma = 0;
     flags.f.printer_enable = 0;
     flags.f.numeric_data_input = 0;
     flags.f.alpha_data_input = 0;

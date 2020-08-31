@@ -353,7 +353,7 @@
 /* Underhill's COPAN extensions (Obsolete) */
 //replaced by other things
 #define CMD_QSIGMA      315
-#define CMD_CLOSEF      316
+#define CMD_QF          316
 #define CMD_READP       317
 #define CMD_WRITEP      318
 #define CMD_GETXY       319

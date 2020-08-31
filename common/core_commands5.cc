@@ -104,6 +104,12 @@ int docmd_pwrf(arg_struct *arg) {
     return ERR_NONE;
 }
 
+int docmd_qf(arg_struct *arg) {
+    if(flags.f.all_sigma)
+        flags.f.q_fit = !flags.f.q_fit;
+    return ERR_NONE;
+}
+
 int docmd_allsigma(arg_struct *arg) {
     flags.f.all_sigma = 1;
     flags.f.q_sigma = 0;
