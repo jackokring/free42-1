@@ -745,9 +745,10 @@ static int mappable_fcstx(phloat x, phloat *y) {
         return ERR_STAT_MATH_ERROR;
     if(flags.f.q_fit) {
         phloat r1, r2;
-        if (model.quad == 0)
+        r2 = model.qslope * model.qslope - 4 * model.quad * (model.qyint - x);
+        if (model.quad == 0 || r2 < 0)
             return ERR_STAT_MATH_ERROR;
-        r2 = sqrt(model.qslope * model.qslope - 4 * model.quad * (model.qyint - x));
+        r2 = sqrt(r2);
         r1 = (-model.qslope + r2) / (2 * model.quad);
         r2 = (-model.qslope - r2) / (2 * model.quad);
         /* choice logic */
