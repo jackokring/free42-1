@@ -490,6 +490,43 @@ static struct model_struct {
 #define MODEL_EXP 2
 #define MODEL_PWR 3
 
+static void matrix_helper2(int error, vartype *result) {
+    vartype_realmatrix *r = (vartype_realmatrix *) result;
+    phloat *data = r->array->data;
+    model.quad = data[0];
+    model.qslope = data[1];
+    model.quad = data[2];
+    free_vartype(result);
+}
+
+static int matrix_helper1() {
+    // caller must call get_model_summation(modl)
+    vartype *sig = new_realmatrix(3, 3);
+    vartype *col = new_realmatrix(1, 3);
+    vartype_realmatrix *r = (vartype_realmatrix *) sig;
+    phloat *data = r->array->data;
+    data[0] = model.x4;
+    data[1] = model.x3;
+    data[2] = model.x2;
+    data[3] = model.x3;
+    data[4] = model.x2;
+    data[5] = model.x;
+    data[6] = model.x2;
+    data[7] = model.x;
+    data[8] = model.n;
+    r = (vartype_realmatrix *) col;
+    data = r->array->data;
+    data[0] = model.x2y;
+    data[1] = model.xy;
+    data[2] = model.y;
+    /* int linalg_div(const vartype *left, const vartype *right,
+                             void (*completion)(int, vartype *)); */
+    int err = linalg_div(col, sig, matrix_helper2);
+    free_vartype(sig);
+    free_vartype(col);
+    return err;
+}
+
 static int get_model_summation(int modl) {
     int err = get_summation();
     if (err != ERR_NONE)
@@ -559,44 +596,7 @@ static int get_model_summation(int modl) {
         model.y2 = sum.y2;
     }
     model.n = sum.n;
-    return ERR_NONE;
-}
-
-static void matrix_helper2(int error, vartype *result) {
-    vartype_realmatrix *r = (vartype_realmatrix *) result;
-    phloat *data = r->array->data;
-    model.quad = data[0];
-    model.qslope = data[1];
-    model.quad = data[2];
-    free_vartype(result);
-}
-
-static int matrix_helper1() {
-    // caller must call get_model_summation(modl)
-    vartype *sig = new_realmatrix(3, 3);
-    vartype *col = new_realmatrix(1, 3);
-    vartype_realmatrix *r = (vartype_realmatrix *) sig;
-    phloat *data = r->array->data;
-    data[0] = model.x4;
-    data[1] = model.x3;
-    data[2] = model.x2;
-    data[3] = model.x3;
-    data[4] = model.x2;
-    data[5] = model.x;
-    data[6] = model.x2;
-    data[7] = model.x;
-    data[8] = model.n;
-    r = (vartype_realmatrix *) col;
-    data = r->array->data;
-    data[0] = model.x2y;
-    data[1] = model.xy;
-    data[2] = model.y;
-    /* int linalg_div(const vartype *left, const vartype *right,
-                             void (*completion)(int, vartype *)); */
-    int err = linalg_div(col, sig, matrix_helper2);
-    free_vartype(sig);
-    free_vartype(col);
-    return err;
+    return matrix_helper1();
 }
 
 static int corr_helper(int modl, phloat *r) {
@@ -606,15 +606,32 @@ static int corr_helper(int modl, phloat *r) {
         return err;
     if (model.n == 0 || model.n == 1)
         return ERR_STAT_MATH_ERROR;
-    cov = model.xy - model.x * model.y / model.n;
-    varx = model.x2 - model.x * model.x / model.n;
-    vary = model.y2 - model.y * model.y / model.n;
-    if (varx <= 0 || vary <= 0)
-        return ERR_STAT_MATH_ERROR;
-    v = varx * vary;
-    if (v == 0)
-        return ERR_STAT_MATH_ERROR;
-    tr = cov / sqrt(v);
+    if(flags.f.q_sigma) {
+        if (model.n == 2)
+            return ERR_STAT_MATH_ERROR;
+        /* y2 - 2ax2y - bxy - 2cy + a2x4 + 2abx3 + 2acx2 - bxy + b2x2 + 2bcx - c2 */
+        v = model.y2 - 2 * (model.quad * model.x2y - model.qyint
+                                                * (model.y - model.qslope * model.x))
+                    - model.qslope * model.x * model.y + model.quad * model.quad * model.x4
+                    + 2 * (model.quad * model.slope * model.x3
+                                                + model.quad * model.qyint * model.x2)
+                    - model.qslope * model.xy + model.qslope * model.qslope * model.x2
+                                                - model.qyint * model.qyint;
+        /* y2 - 2yMy - (My)2 */
+        tr = model.y2 - (2 + 1 / model.n) * model.y * model.y / model.n; 
+        tr = 1 - v / tr;
+        tr = sqrt(tr);
+    } else {
+        cov = model.xy - model.x * model.y / model.n;
+        varx = model.x2 - model.x * model.x / model.n;
+        vary = model.y2 - model.y * model.y / model.n;
+        if (varx <= 0 || vary <= 0)
+            return ERR_STAT_MATH_ERROR;
+        v = varx * vary;
+        if (v == 0)
+            return ERR_STAT_MATH_ERROR;
+        tr = cov / sqrt(v);
+    }
     if (tr < -1)
         tr = -1;
     else if (tr > 1)
