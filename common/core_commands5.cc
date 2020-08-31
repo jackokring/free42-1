@@ -912,7 +912,11 @@ int docmd_slope(arg_struct *arg) {
     err = slope_yint_helper();
     if (err != ERR_NONE)
         return err;
-    v = new_real(flags.f.q_fit ? model.qslope : model.slope);
+    if(flags.f.q_fit) {
+        v = new_complex(model.qslope, model.quad);
+    } else {
+        v = new_real(model.slope);
+    }
     if (v == NULL)
         return ERR_INSUFFICIENT_MEMORY;
     recall_result(v);
