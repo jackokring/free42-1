@@ -300,7 +300,9 @@ typedef union {
         char f14;
         char trace_print; /* 'normal_print' ignored if this is set */
         char normal_print;
-        char f17; char f18; char f19; char f20;
+        char f17; char f18;
+        /* char f19; char f20; */
+        char q_sigma; char q_fit; //q sigma quadratic stats
         char printer_enable;
         char numeric_data_input;
         char alpha_data_input;
