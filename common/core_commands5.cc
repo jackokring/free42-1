@@ -105,7 +105,7 @@ int docmd_pwrf(arg_struct *arg) {
 }
 
 int docmd_qf(arg_struct *arg) {
-    if(flags.f.all_sigma)
+    if(flags.f.all_sigma && flags.f.q_sigma)
         flags.f.q_fit = !flags.f.q_fit;
     return ERR_NONE;
 }
@@ -449,6 +449,15 @@ static int get_summation() {
         sum.xlny = sigmaregs[11];
         sum.ylnx = sigmaregs[12];
         sum.x2y = sigmaregs[13];
+        if(flags.f.q_sigma) {
+            sum.x3 = sigmaregs[14];
+            sum.x4 = sigmaregs[15];
+            sum.lnx3 = sigmaregs[16];
+            sum.lnx4 = sigmaregs[17];
+            sum.ylnx2 = sigmaregs[18];
+            sum.x2lny = sigmaregs[19];
+            sum.lnx2lny = sigmaregs[20];
+        }
     }
     return ERR_NONE;
 }
@@ -466,7 +475,6 @@ static struct model_struct {
     phloat slope;
     phloat yint;
     /* quad order */
-    phloat quad;
     phloat x2y;
     phloat x3;
     phloat x4;
@@ -487,6 +495,11 @@ static int get_model_summation(int modl) {
             model.xy = sum.xy;
             model.ln_before = 0;
             model.exp_after = 0;
+            if(flags.f.q_sigma) {
+                model.x2y = sum.x2y;
+                model.x3 = sum.x3;
+                model.x4 = sum.x4;
+            }
             break;
         case MODEL_LOG:
             if (flags.f.log_fit_invalid)
@@ -494,6 +507,11 @@ static int get_model_summation(int modl) {
             model.xy = sum.ylnx;
             model.ln_before = 1;
             model.exp_after = 0;
+            if(flags.f.q_sigma) {
+                model.x2y = sum.ylnx2;
+                model.x3 = sum.lnx3;
+                model.x4 = sum.lnx4;
+            }
             break;
         case MODEL_EXP:
             if (flags.f.exp_fit_invalid)
@@ -501,6 +519,11 @@ static int get_model_summation(int modl) {
             model.xy = sum.xlny;
             model.ln_before = 0;
             model.exp_after = 1;
+            if(flags.f.q_sigma) {
+                model.x2y = sum.x2lny;
+                model.x3 = sum.x3;
+                model.x4 = sum.x4;
+            }
             break;
         case MODEL_PWR:
             if (flags.f.pwr_fit_invalid)
@@ -508,6 +531,11 @@ static int get_model_summation(int modl) {
             model.xy = sum.lnxlny;
             model.ln_before = 1;
             model.exp_after = 1;
+            if(flags.f.q_sigma) {
+                model.x2y = sum.lnx2lny;
+                model.x3 = sum.lnx3;
+                model.x4 = sum.lnx4;
+            }
             break;
         default:
             return ERR_INVALID_FORECAST_MODEL;
