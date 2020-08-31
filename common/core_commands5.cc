@@ -596,7 +596,8 @@ static int get_model_summation(int modl) {
         model.y2 = sum.y2;
     }
     model.n = sum.n;
-    return (flags.f.q_fit && flags.f.q_sigma) ? matrix_helper1() : ERR_NONE;
+    return (flags.f.q_fit && flags.f.q_sigma
+                && model.n > 2) ? matrix_helper1() : ERR_NONE;
 }
 
 static int corr_helper(int modl, phloat *r) {
@@ -743,6 +744,13 @@ static int mappable_fcstx(phloat x, phloat *y) {
     if (model.slope == 0)
         return ERR_STAT_MATH_ERROR;
     if(flags.f.q_fit) {
+        phloat r1, r2;
+        if (model.quad == 0)
+            return ERR_STAT_MATH_ERROR;
+        r2 = sqrt(model.qslope * model.qslope - 4 * model.quad * (model.qyint - x));
+        r1 = (-model.qslope + r2) / (2 * model.quad);
+        r2 = (-model.qslope - r2) / (2 * model.quad);
+        /* choice logic */
 
     } else {
         x = (x - model.yint) / model.slope;
