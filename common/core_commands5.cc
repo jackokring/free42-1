@@ -742,7 +742,11 @@ static int mappable_fcstx(phloat x, phloat *y) {
     }
     if (model.slope == 0)
         return ERR_STAT_MATH_ERROR;
-    x = (x - model.yint) / model.slope;
+    if(flags.f.q_fit) {
+
+    } else {
+        x = (x - model.yint) / model.slope;
+    }
     if (model.ln_before)
         x = exp(x);
     if ((inf = p_isinf(x)) != 0)
