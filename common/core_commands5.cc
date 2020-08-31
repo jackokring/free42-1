@@ -596,7 +596,7 @@ static int get_model_summation(int modl) {
         model.y2 = sum.y2;
     }
     model.n = sum.n;
-    return matrix_helper1();
+    return (flags.f.q_fit && flags.f.q_sigma) ? matrix_helper1() : ERR_NONE;
 }
 
 static int corr_helper(int modl, phloat *r) {
@@ -606,21 +606,21 @@ static int corr_helper(int modl, phloat *r) {
         return err;
     if (model.n == 0 || model.n == 1)
         return ERR_STAT_MATH_ERROR;
-    if(flags.f.q_sigma) {
+    if(flags.f.q_fit) {
         if (model.n == 2)
             return ERR_STAT_MATH_ERROR;
         /* y2 - 2ax2y - bxy - 2cy + a2x4 + 2abx3 + 2acx2 - bxy + b2x2 + 2bcx - c2 */
         v = model.y2 - 2 * (model.quad * model.x2y - model.qyint
                                                 * (model.y - model.qslope * model.x))
                     - model.qslope * model.x * model.y + model.quad * model.quad * model.x4
-                    + 2 * (model.quad * model.slope * model.x3
+                    + 2 * (model.quad * model.qslope * model.x3
                                                 + model.quad * model.qyint * model.x2)
                     - model.qslope * model.xy + model.qslope * model.qslope * model.x2
                                                 - model.qyint * model.qyint;
         /* y2 - 2yMy - (My)2 */
         tr = model.y2 - (2 + 1 / model.n) * model.y * model.y / model.n; 
         tr = 1 - v / tr;
-        tr = sqrt(tr);
+        if(tr < 0) tr = 0;
     } else {
         cov = model.xy - model.x * model.y / model.n;
         varx = model.x2 - model.x * model.x / model.n;
@@ -777,7 +777,11 @@ static int mappable_fcsty(phloat x, phloat *y) {
             return ERR_INVALID_FORECAST_MODEL;
         x = log(x);
     }
-    x = x * model.slope + model.yint;
+    if(flags.f.q_fit) {
+        x = x * x * model.quad + x * model.qslope + model.qyint;
+    } else {
+        x = x * model.slope + model.yint;
+    }
     if (model.exp_after)
         x = exp(x);
     if ((inf = p_isinf(x)) != 0)
@@ -904,7 +908,7 @@ int docmd_slope(arg_struct *arg) {
     err = slope_yint_helper();
     if (err != ERR_NONE)
         return err;
-    v = new_real(model.slope);
+    v = new_real(flags.f.q_fit ? model.qslope : model.slope);
     if (v == NULL)
         return ERR_INSUFFICIENT_MEMORY;
     recall_result(v);
@@ -962,12 +966,12 @@ int docmd_yint(arg_struct *arg) {
     err = slope_yint_helper();
     if (err != ERR_NONE)
         return err;
+    yint = flags.f.q_fit ? model.qyint : model.yint;
     if (model.exp_after) {
-        yint = exp(model.yint);
+        yint = exp(yint);
         if (p_isinf(yint) != 0)
             yint = POS_HUGE_PHLOAT;
-    } else
-        yint = model.yint;
+    }
     v = new_real(yint);
     if (v == NULL)
         return ERR_INSUFFICIENT_MEMORY;
