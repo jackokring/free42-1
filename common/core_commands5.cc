@@ -1000,6 +1000,22 @@ int docmd_yint(arg_struct *arg) {
     return ERR_NONE;
 }
 
+int docmd_addr(arg_struct *arg) {
+    vartype *res, *sub, *add;
+    int error = generic_add(reg_x, reg_y, &res);
+    if (error != ERR_NONE) return error;
+    error = generic_sub(res, reg_x, &sub);
+    if (error != ERR_NONE) return error;
+    error = generic_sub(reg_y, sub, &add);
+    if (error != ERR_NONE) return error;
+    free_vartype(sub);
+    free_vartype(reg_lastx);
+    reg_lastx = reg_x;
+    reg_y = res;
+    reg_x = add;
+    return ERR_NONE;
+}
+
 static void copy_arg(arg_struct *arg, char *name, int len) {  
     arg->length = len;
     for (int i = 0; i < len; i++)

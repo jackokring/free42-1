@@ -252,7 +252,7 @@ menu_spec menus[] = {
                         { 0x1000 + CMD_WSIZE_T, 0, "" },
                         { 0x2000 + CMD_BSIGNED, 0, "" },
                         { 0x2000 + CMD_BWRAP,   0, "" },
-                        { 0x1000 + CMD_NULL,    0, "" },
+                        { 0x1000 + CMD_ADDR,    0, "" },
                         { 0x1000 + CMD_BRESET,  0, "" } } },
     { /* MENU_DISP */ MENU_NONE, MENU_NONE, MENU_NONE,
                       { { 0x2000 + CMD_FIX,      0, "" },

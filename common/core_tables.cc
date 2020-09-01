@@ -368,7 +368,7 @@ static const command_spec cmd_array[] =
     { /* QSIGMA */      "Q\005",                2, docmd_qsigma,      0x0000a7c1, ARG_NONE,  FLAG_NONE },
     { /* QF */          "QF",                   2, docmd_qf,          0x0000a7c2, ARG_NONE,  FLAG_NONE },
     { /* GEN */         "GEN",                  3, docmd_gen,         0x0000a7c3, ARG_NONE,  FLAG_NONE },
-    { /* WRITP */       "WRITP",                5, docmd_xrom,        0x0000a7c4, ARG_NONE,  FLAG_NONE },
+    { /* ADDR */        "+R",                   2, docmd_addr,        0x0000a7c4, ARG_NONE,  FLAG_NONE },
     { /* GETXY */       "GETXY",                5, docmd_xrom,        0x0000a7c5, ARG_NONE,  FLAG_NONE },
     { /* PUTXY */       "PUTXY",                5, docmd_xrom,        0x0000a7c6, ARG_NONE,  FLAG_NONE },
     { /* CLRP */        "CLRP",                 4, docmd_xrom,        0x0000a7c7, ARG_NONE,  FLAG_NONE },
