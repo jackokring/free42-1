@@ -1000,20 +1000,21 @@ int docmd_yint(arg_struct *arg) {
     return ERR_NONE;
 }
 
-static char prog_tmp[7];
-static int prog_tmp_len = 0;
-
-int docmd_gen(arg_struct *arg) {
-    int err = ERR_NONE;
-    char name[7];
-    int len;
-    string_copy(name, &len, prog_tmp, prog_tmp_len);//save
-    arg->type = ARGTYPE_STR;
+static void copy_arg(arg_struct *arg, char *name, int len) {  
     arg->length = len;
     for (int i = 0; i < len; i++)
         arg->val.text[i] = name[i];//copy name
-    err = docmd_xeq(arg);//and indirect execute it
-    string_copy(prog_tmp, &prog_tmp_len, name, len);//restore
+}
+
+static arg_struct args_s;
+
+int docmd_gen(arg_struct *arg) {
+    int err = ERR_NONE;
+    arg_struct args;
+    args.type = ARGTYPE_STR;
+    copy_arg(&args, args_s.val.text, args.length);//save
+    err = docmd_xeq(&args);//and indirect execute it
+    copy_arg(&args_s, args.val.text, args.length);//restore
     return err;
 }
 
@@ -1107,7 +1108,7 @@ int docmd_pgmint(arg_struct *arg) {
         if (!find_global_label(arg, &prgm, &pc))
             return ERR_LABEL_NOT_FOUND;
         set_integ_prgm(arg->val.text, arg->length);
-        string_copy(prog_tmp, &prog_tmp_len, arg->val.text, arg->length);
+        copy_arg(&args_s, arg->val.text, arg->length);
         return ERR_NONE;
     } else
         return ERR_INVALID_TYPE;
