@@ -1026,14 +1026,53 @@ static void copy_arg(arg_struct *arg, char *name, int len) {
 
 static arg_struct args_s;
 
+typedef struct {
+    vartype *x;
+    vartype *y;
+    vartype *z;
+    vartype *t;
+    vartype *lx;
+} saver;
+
+static saver *first_class;
+
 int docmd_gen(arg_struct *arg) {
     int err = ERR_NONE;
     arg_struct args;
+    saver old;
+    saver *cache = first_class;
+    first_class = &old;
+    old.x = dup_vartype(reg_x);
+    old.y = dup_vartype(reg_y);
+    old.z = dup_vartype(reg_z);
+    old.t = dup_vartype(reg_t);
+    old.lx = dup_vartype(reg_lastx);
     args.type = ARGTYPE_STR;
     copy_arg(&args, args_s.val.text, args.length);//save
     err = docmd_xeq(&args);//and indirect execute it
     copy_arg(&args_s, args.val.text, args.length);//restore
+    first_class = cache;//restore outer frame
+    free_vartype(old.x);
+    free_vartype(old.y);
+    free_vartype(old.z);
+    free_vartype(old.t);
+    free_vartype(old.lx);
     return err;
+}
+
+int docmd_srcl(arg_struct *arg) {
+    if(first_class == NULL) return ERR_NONE;
+    free_vartype(reg_x);
+    free_vartype(reg_y);
+    free_vartype(reg_z);
+    free_vartype(reg_t);
+    free_vartype(reg_lastx);
+    reg_x = first_class->x;
+    reg_y = first_class->y;
+    reg_z = first_class->z;
+    reg_t = first_class->t;
+    reg_lastx = first_class->lx;
+    return ERR_NONE;
 }
 
 int docmd_integ(arg_struct *arg) {

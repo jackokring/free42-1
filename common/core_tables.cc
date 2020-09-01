@@ -369,7 +369,7 @@ static const command_spec cmd_array[] =
     { /* QF */          "QF",                   2, docmd_qf,          0x0000a7c2, ARG_NONE,  FLAG_NONE },
     { /* GEN */         "GEN",                  3, docmd_gen,         0x0000a7c3, ARG_NONE,  FLAG_NONE },
     { /* ADDR */        "+R",                   2, docmd_addr,        0x0000a7c4, ARG_NONE,  FLAG_NONE },
-    { /* GETXY */       "GETXY",                5, docmd_xrom,        0x0000a7c5, ARG_NONE,  FLAG_NONE },
+    { /* SRCL */        "SRCL",                 4, docmd_srcl,        0x0000a7c5, ARG_NONE,  FLAG_NONE },
     { /* PUTXY */       "PUTXY",                5, docmd_xrom,        0x0000a7c6, ARG_NONE,  FLAG_NONE },
     { /* CLRP */        "CLRP",                 4, docmd_xrom,        0x0000a7c7, ARG_NONE,  FLAG_NONE },
     { /* CLRD */        "CLRD",                 4, docmd_xrom,        0x0000a7c8, ARG_NONE,  FLAG_NONE },
