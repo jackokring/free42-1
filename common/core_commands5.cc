@@ -491,6 +491,7 @@ static struct model_struct {
 #define MODEL_PWR 3
 
 static void matrix_helper2(int error, vartype *result) {
+    if(error != ERR_NONE) return;
     vartype_realmatrix *r = (vartype_realmatrix *) result;
     phloat *data = r->array->data;
     model.quad = data[0];
@@ -531,6 +532,8 @@ static int get_model_summation(int modl) {
     int err = get_summation();
     if (err != ERR_NONE)
         return err;
+    err = (flags.f.q_fit && flags.f.q_sigma
+                && model.n > 2) ? matrix_helper1() : ERR_NONE;//before
     switch (modl) {
         case MODEL_LIN:
             model.xy = sum.xy;
@@ -596,8 +599,7 @@ static int get_model_summation(int modl) {
         model.y2 = sum.y2;
     }
     model.n = sum.n;
-    return (flags.f.q_fit && flags.f.q_sigma
-                && model.n > 2) ? matrix_helper1() : ERR_NONE;
+    return err;
 }
 
 static int corr_helper(int modl, phloat *r) {
@@ -607,7 +609,7 @@ static int corr_helper(int modl, phloat *r) {
         return err;
     if (model.n == 0 || model.n == 1)
         return ERR_STAT_MATH_ERROR;
-    if(flags.f.q_fit) {
+    if(flags.f.q_fit && flags.f.q_sigma) {//in context of LIN-Sigma
         if (model.n == 2)
             return ERR_STAT_MATH_ERROR;
         /* y2 - 2ax2y - bxy - 2cy + a2x4 + 2abx3 + 2acx2 - bxy + b2x2 + 2bcx - c2 */
@@ -741,7 +743,7 @@ static int mappable_fcstx(phloat x, phloat *y) {
             return ERR_INVALID_FORECAST_MODEL;
         x = log(x);
     }
-    if(flags.f.q_fit) {
+    if(flags.f.q_fit && flags.f.q_sigma) {
         phloat r1;
         r1 = model.qslope * model.qslope - 4 * model.quad * (model.qyint - x);
         if (model.quad == 0 || r1 < 0)
@@ -792,7 +794,7 @@ static int mappable_fcsty(phloat x, phloat *y) {
             return ERR_INVALID_FORECAST_MODEL;
         x = log(x);
     }
-    if(flags.f.q_fit) {
+    if(flags.f.q_fit && flags.f.q_sigma) {
         x = x * x * model.quad + x * model.qslope + model.qyint;
     } else {
         x = x * model.slope + model.yint;
@@ -902,7 +904,7 @@ int docmd_wsd(arg_struct *arg) {
     int err = get_summation();
     if (err != ERR_NONE)
         return err;
-    if (sum.y == 0)
+    if (sum.y == 0 || !flags.f.all_sigma) //origin of non-linearity is weighted SD
         return ERR_STAT_MATH_ERROR;
     wsd = (sum.x2y - (sum.xy * sum.xy / sum.y)) / (sum.y - 1);
     if (p_isinf(wsd))
@@ -923,7 +925,7 @@ int docmd_slope(arg_struct *arg) {
     err = slope_yint_helper();
     if (err != ERR_NONE)
         return err;
-    if(flags.f.q_fit) {
+    if(flags.f.q_fit && flags.f.q_sigma) {
         v = new_complex(model.qslope, model.quad);
     } else {
         v = new_real(model.slope);
@@ -985,7 +987,7 @@ int docmd_yint(arg_struct *arg) {
     err = slope_yint_helper();
     if (err != ERR_NONE)
         return err;
-    yint = flags.f.q_fit ? model.qyint : model.yint;
+    yint = (flags.f.q_fit && flags.f.q_sigma) ? model.qyint : model.yint;
     if (model.exp_after) {
         yint = exp(yint);
         if (p_isinf(yint) != 0)
@@ -996,6 +998,23 @@ int docmd_yint(arg_struct *arg) {
         return ERR_INSUFFICIENT_MEMORY;
     recall_result(v);
     return ERR_NONE;
+}
+
+static char prog_tmp[7];
+static int prog_tmp_len = 0;
+
+int docmd_gen(arg_struct *arg) {
+    int err = ERR_NONE;
+    char name[7];
+    int len;
+    string_copy(name, &len, prog_tmp, prog_tmp_len);//save
+    arg->type = ARGTYPE_STR;
+    arg->length = len;
+    for (int i = 0; i < len; i++)
+        arg->val.text[i] = name[i];//copy name
+    err = docmd_xeq(arg);//and indirect execute it
+    string_copy(prog_tmp, &prog_tmp_len, name, len);//restore
+    return err;
 }
 
 int docmd_integ(arg_struct *arg) {
@@ -1088,6 +1107,7 @@ int docmd_pgmint(arg_struct *arg) {
         if (!find_global_label(arg, &prgm, &pc))
             return ERR_LABEL_NOT_FOUND;
         set_integ_prgm(arg->val.text, arg->length);
+        string_copy(prog_tmp, &prog_tmp_len, arg->val.text, arg->length);
         return ERR_NONE;
     } else
         return ERR_INVALID_TYPE;

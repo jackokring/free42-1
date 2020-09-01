@@ -322,6 +322,7 @@
 #define CMD_TANH        284
 #define CMD_TRANS       285
 #define CMD_UVEC        286
+//port IANA?
 #define CMD_WMEAN       287
 #define CMD_WRAP        288
 #define CMD_X_SWAP      289
@@ -354,7 +355,7 @@
 //replaced by other things
 #define CMD_QSIGMA      315
 #define CMD_QF          316
-#define CMD_READP       317
+#define CMD_GEN         317
 #define CMD_WRITEP      318
 #define CMD_GETXY       319
 #define CMD_PUTXY       320
