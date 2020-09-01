@@ -1012,7 +1012,7 @@ int docmd_addr(arg_struct *arg) {
     free_vartype(reg_lastx);
     reg_lastx = reg_x;
     free_vartype(reg_y);
-    free_vartype(reg_x);
+    //free_vartype(reg_x);
     reg_y = res;
     reg_x = add;
     return ERR_NONE;
