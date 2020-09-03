@@ -358,7 +358,7 @@
 #define CMD_GEN         317
 #define CMD_ADDR        318
 #define CMD_SRCL        319
-#define CMD_PUTXY       320
+#define CMD_WCSD        320
 #define CMD_CLRP        321
 #define CMD_CLRD        322
 #define CMD_APPD        323
