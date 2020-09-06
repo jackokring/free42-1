@@ -359,7 +359,7 @@
 #define CMD_ADDR        318
 #define CMD_SRCL        319
 #define CMD_WCSD        320
-#define CMD_CLRP        321
+#define CMD_SSTO        321
 #define CMD_CLRD        322
 #define CMD_APPD        323
 #define CMD_GETN        324

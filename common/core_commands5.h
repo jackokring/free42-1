@@ -51,6 +51,7 @@ int docmd_wmean(arg_struct *arg);
 int docmd_yint(arg_struct *arg);
 int docmd_wsd(arg_struct *arg);
 int docmd_wcsd(arg_struct *arg);
+int docmd_ssto(arg_struct *arg);
 int docmd_gen(arg_struct *arg);
 int docmd_srcl(arg_struct *arg);
 int docmd_addr(arg_struct *arg);

@@ -1039,6 +1039,20 @@ int docmd_addr(arg_struct *arg) {
 
 static vartype *args_s = NULL;
 
+int docmd_ssto(arg_struct *arg) {
+    int err;
+    err = store_var("\x06X", 2, dup_vartype(reg_x), true);//X
+    if(err != ERR_NONE) return err;
+    err = store_var("\x06Y", 2, dup_vartype(reg_y), true);//Y
+    if(err != ERR_NONE) return err;
+    err = store_var("\x06Z", 2, dup_vartype(reg_z), true);//Z
+    if(err != ERR_NONE) return err;
+    err = store_var("\x06T", 2, dup_vartype(reg_t), true);//T
+    if(err != ERR_NONE) return err;
+    err = store_var("\x06LX", 3, dup_vartype(reg_lastx), true);//LX
+    return err;
+}
+
 int docmd_gen(arg_struct *arg) {
     int err;
     if(args_s == NULL) return ERR_LABEL_NOT_FOUND;
@@ -1052,23 +1066,15 @@ int docmd_gen(arg_struct *arg) {
     if(err != ERR_NONE) return err;
     err = store_var("\x06G", 2, dup_vartype(args_s), true);//local pgmint
     if(err != ERR_NONE) return err;
-    err = store_var("\x06X", 2, dup_vartype(reg_x), true);//X
-    if(err != ERR_NONE) return err;
-    err = store_var("\x06Y", 2, dup_vartype(reg_y), true);//Y
-    if(err != ERR_NONE) return err;
-    err = store_var("\x06Z", 2, dup_vartype(reg_z), true);//Z
-    if(err != ERR_NONE) return err;
-    err = store_var("\x06T", 2, dup_vartype(reg_t), true);//T
-    if(err != ERR_NONE) return err;
-    err = store_var("\x06LX", 3, dup_vartype(reg_lastx), true);//LX
-    return err;
+    return docmd_ssto(arg);//chain
 }
 
 int docmd_srcl(arg_struct *arg) {
     vartype *r = recall_var("\x06G", 2);
-    if(r == NULL) return ERR_NONEXISTENT;
-    if(args_s != NULL) free_vartype(args_s);//safety store
-    args_s = dup_vartype(r);//restore outer gen
+    if(r != NULL) {//outer gen
+        if(args_s != NULL) free_vartype(args_s);//safety store
+        args_s = dup_vartype(r);//restore outer gen
+    }
     vartype *x, *y, *z, *t, *lx;
     x = recall_var("\x06X", 2);
     y = recall_var("\x06Y", 2);

@@ -307,6 +307,7 @@ typedef struct {
     bool enable_ext_time;
     bool enable_ext_fptest;
     bool enable_ext_prog;
+    bool enable_ext_jacko;
 } core_settings_struct;
 
 extern core_settings_struct core_settings;

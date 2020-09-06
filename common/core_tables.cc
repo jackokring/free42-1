@@ -371,7 +371,7 @@ static const command_spec cmd_array[] =
     { /* ADDR */        "+R",                   2, docmd_addr,        0x0000a7c4, ARG_NONE,  FLAG_NONE },
     { /* SRCL */        "SRCL",                 4, docmd_srcl,        0x0000a7c5, ARG_NONE,  FLAG_NONE },
     { /* WCSD */        "WCSD",                 4, docmd_wcsd,        0x0000a7c6, ARG_NONE,  FLAG_NONE },
-    { /* CLRP */        "CLRP",                 4, docmd_xrom,        0x0000a7c7, ARG_NONE,  FLAG_NONE },
+    { /* SSTO */        "SSTO",                 4, docmd_ssto,        0x0000a7c7, ARG_NONE,  FLAG_NONE },
     { /* CLRD */        "CLRD",                 4, docmd_xrom,        0x0000a7c8, ARG_NONE,  FLAG_NONE },
     { /* APPD */        "APPD",                 4, docmd_xrom,        0x0000a7c9, ARG_NONE,  FLAG_NONE },
     { /* GETN */        "GETN",                 4, docmd_xrom,        0x0000a7ca, ARG_NONE,  FLAG_NONE },

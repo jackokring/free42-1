@@ -87,6 +87,7 @@ void core_init(int read_saved_state, int4 version, const char *state_file_name, 
     #endif
     core_settings.enable_ext_time = true;
     core_settings.enable_ext_prog = true;
+    core_settings.enable_ext_jacko = true;
 
     char *state_file_name_crash = NULL;
     if (read_saved_state == 1) {
