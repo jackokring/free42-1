@@ -524,7 +524,7 @@ menu_spec menus[] = {
                       { { 0x1000 + CMD_MVAR,   0, "" },
                         { 0x1000 + CMD_GEN,    0, "" },
                         { 0x1000 + CMD_SRCL,   0, "" },
-                        { 0x1000 + CMD_NULL,   0, "" },
+                        { 0x1000 + CMD_SSTO,   0, "" },
                         { 0x1000 + CMD_PGMINT, 0, "" },
                         { 0x1000 + CMD_INTEG,  0, "" } } },
     { /* MENU_INTEG_PARAMS */ MENU_NONE, MENU_NONE, MENU_NONE,
