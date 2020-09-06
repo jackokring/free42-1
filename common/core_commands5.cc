@@ -19,6 +19,7 @@
 
 #include "core_commands2.h"
 #include "core_commands5.h"
+#include "core_commands7.h"
 #include "core_display.h"
 #include "core_helpers.h"
 #include "core_main.h"
@@ -1036,60 +1037,47 @@ int docmd_addr(arg_struct *arg) {
     return ERR_NONE;
 }
 
-static void copy_arg(arg_struct *arg, char *name, int len) {  
-    arg->length = len;
-    for (int i = 0; i < len; i++)
-        arg->val.text[i] = name[i];//copy name
-}
-
-static arg_struct args_s;
-
-typedef struct {
-    vartype *x;
-    vartype *y;
-    vartype *z;
-    vartype *t;
-    vartype *lx;
-} saver;
-
-static saver *first_class;
+static vartype *args_s = NULL;
 
 int docmd_gen(arg_struct *arg) {
-    int err = ERR_NONE;
+    int err;
+    if(args_s == NULL) return ERR_LABEL_NOT_FOUND;
     arg_struct args;
-    saver old;
-    saver *cache = first_class;
-    first_class = &old;
-    old.x = dup_vartype(reg_x);
-    old.y = dup_vartype(reg_y);
-    old.z = dup_vartype(reg_z);
-    old.t = dup_vartype(reg_t);
-    old.lx = dup_vartype(reg_lastx);
     args.type = ARGTYPE_STR;
-    copy_arg(&args, args_s.val.text, args.length);//save
+    int len;
+    string_copy(args.val.text, &len,
+                ((vartype_string *)args_s)->text, ((vartype_string *)args_s)->length);
+    args.length = len;
     err = docmd_xeq(&args);//and indirect execute it
-    copy_arg(&args_s, args.val.text, args.length);//restore
-    first_class = cache;//restore outer frame
-    free_vartype(old.x);
-    free_vartype(old.y);
-    free_vartype(old.z);
-    free_vartype(old.t);
-    free_vartype(old.lx);
+    if(err != ERR_NONE) return err;
+    err = store_var("\x06G", 2, dup_vartype(args_s), true);//local pgmint
+    if(err != ERR_NONE) return err;
+    err = store_var("\x06X", 2, dup_vartype(reg_x), true);//X
+    if(err != ERR_NONE) return err;
+    err = store_var("\x06Y", 2, dup_vartype(reg_y), true);//Y
+    if(err != ERR_NONE) return err;
+    err = store_var("\x06Z", 2, dup_vartype(reg_z), true);//Z
+    if(err != ERR_NONE) return err;
+    err = store_var("\x06T", 2, dup_vartype(reg_t), true);//T
+    if(err != ERR_NONE) return err;
+    err = store_var("\x06LX", 3, dup_vartype(reg_lastx), true);//LX
     return err;
 }
 
 int docmd_srcl(arg_struct *arg) {
-    if(first_class == NULL) return ERR_NONE;
+    vartype *r = recall_var("\x06G", 2);
+    if(args_s != NULL) free_vartype(args_s);//safety store
+    args_s = dup_vartype(r);//restore outer gen
     free_vartype(reg_x);
     free_vartype(reg_y);
     free_vartype(reg_z);
     free_vartype(reg_t);
     free_vartype(reg_lastx);
-    reg_x = first_class->x;
-    reg_y = first_class->y;
-    reg_z = first_class->z;
-    reg_t = first_class->t;
-    reg_lastx = first_class->lx;
+    reg_x = dup_vartype(recall_var("\x06X", 2));
+    reg_y = dup_vartype(recall_var("\x06Y", 2));
+    reg_z = dup_vartype(recall_var("\x06Z", 2));
+    reg_t = dup_vartype(recall_var("\x06T", 2));
+    reg_lastx = dup_vartype(recall_var("\x06LX", 3));
     return ERR_NONE;
 }
 
@@ -1183,7 +1171,8 @@ int docmd_pgmint(arg_struct *arg) {
         if (!find_global_label(arg, &prgm, &pc))
             return ERR_LABEL_NOT_FOUND;
         set_integ_prgm(arg->val.text, arg->length);
-        copy_arg(&args_s, arg->val.text, arg->length);
+        if(args_s != NULL) free_vartype(args_s);//safety store
+        args_s = new_string(arg->val.text, arg->length);
         return ERR_NONE;
     } else
         return ERR_INVALID_TYPE;
