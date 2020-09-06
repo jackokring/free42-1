@@ -1066,18 +1066,27 @@ int docmd_gen(arg_struct *arg) {
 
 int docmd_srcl(arg_struct *arg) {
     vartype *r = recall_var("\x06G", 2);
+    if(r == NULL) return ERR_NONEXISTENT;
     if(args_s != NULL) free_vartype(args_s);//safety store
     args_s = dup_vartype(r);//restore outer gen
+    vartype *x, *y, *z, *t, *lx;
+    x = recall_var("\x06X", 2);
+    y = recall_var("\x06Y", 2);
+    z = recall_var("\x06Z", 2);
+    t = recall_var("\x06T", 2);
+    lx = recall_var("\x06LX", 3);
+    if(x == NULL || y == NULL || z == NULL
+            || t == NULL || lx == NULL) return ERR_NONEXISTENT;
     free_vartype(reg_x);
     free_vartype(reg_y);
     free_vartype(reg_z);
     free_vartype(reg_t);
     free_vartype(reg_lastx);
-    reg_x = dup_vartype(recall_var("\x06X", 2));
-    reg_y = dup_vartype(recall_var("\x06Y", 2));
-    reg_z = dup_vartype(recall_var("\x06Z", 2));
-    reg_t = dup_vartype(recall_var("\x06T", 2));
-    reg_lastx = dup_vartype(recall_var("\x06LX", 3));
+    reg_x = dup_vartype(x);
+    reg_y = dup_vartype(y);
+    reg_z = dup_vartype(z);
+    reg_t = dup_vartype(t);
+    reg_lastx = dup_vartype(lx); 
     return ERR_NONE;
 }
 
