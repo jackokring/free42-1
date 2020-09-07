@@ -20,6 +20,10 @@
 
 
 #include "free42.h"
+//#define BID_ERROR
+//the define above reintroduces an error
+//without it NUMBER_FORMAT_BID128 can't be imported
+//BUT the intel library does not have to be used
 #ifdef BCD_MATH
 #include "bid_conf.h"
 #include "bid_functions.h"

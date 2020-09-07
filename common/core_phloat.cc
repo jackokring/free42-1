@@ -930,6 +930,7 @@ int string2phloat(const char *buf, int buflen, phloat *d) {
 }
 
 double decimal2double(void *data, bool pin_magnitude /* = false */) {
+#ifdef BID_ERROR
     if (state_file_number_format == NUMBER_FORMAT_BID128) {
         double res;
         BID_UINT128 *b, b2;
@@ -948,6 +949,7 @@ double decimal2double(void *data, bool pin_magnitude /* = false */) {
         int inf = isinf(res);
         return inf == 0 ? res : inf < 0 ? NEG_HUGE_PHLOAT : POS_HUGE_PHLOAT;
     }
+#endif
 
     // BCD20_OLD or BCD20_NEW
     short *p = (short *) data;
