@@ -374,7 +374,7 @@ static const command_spec cmd_array[] =
     { /* SSTO */        "SSTO",                 4, docmd_ssto,        0x0000a7c7, ARG_NONE,  FLAG_NONE },
     { /* MSTO */        "MSTO",                 4, docmd_msto,        0x0000a7c8, ARG_NONE,  FLAG_NONE },
     { /* MRCL */        "MRCL",                 4, docmd_mrcl,        0x0000a7c9, ARG_NONE,  FLAG_NONE },
-    { /* GETN */        "GETN",                 4, docmd_xrom,        0x0000a7ca, ARG_NONE,  FLAG_NONE },
+    { /* ATOM */        "ATOM",                 4, docmd_atom,        0x0000a7ca, ARG_NONE,  FLAG_NONE },
     { /* PUTN */        "PUTN",                 4, docmd_xrom,        0x0000a7cb, ARG_NONE,  FLAG_NONE },
     { /* GETZ */        "GETZ",                 4, docmd_xrom,        0x0000a7cc, ARG_NONE,  FLAG_NONE },
     { /* PUTZ */        "PUTZ",                 4, docmd_xrom,        0x0000a7cd, ARG_NONE,  FLAG_NONE },

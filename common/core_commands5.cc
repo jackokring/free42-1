@@ -1047,6 +1047,7 @@ int docmd_addr(arg_struct *arg) {
 }
 
 static vartype *args_s = NULL;
+static vartype *var_s = NULL;
 
 int docmd_ssto(arg_struct *arg) {
     int err;
@@ -1075,8 +1076,10 @@ int docmd_gen(arg_struct *arg) {
     if(err != ERR_NONE) return err;
     err = store_var("\x06G", 2, dup_vartype(args_s), true);//local pgmint
     if(err != ERR_NONE) return err;
-    err = store_var("\x06M", 2, new_string(name_s, len_s), true);//local mvar
-    if(err != ERR_NONE) return err;
+    if(var_s != NULL) {
+        err = store_var("\x06M", 2, dup_vartype(var_s), true);//local mvar
+        if(err != ERR_NONE) return err;
+    }
     return docmd_ssto(arg);//chain
 }
 
@@ -1088,8 +1091,8 @@ int docmd_srcl(arg_struct *arg) {
     }
     r = recall_var("\x06M", 2);
     if(r != NULL) {//outer mvar
-        string_copy(name_s, &len_s, ((vartype_string *)r)->text,
-                ((vartype_string *)r)->length);
+        if(var_s != NULL) free_vartype(var_s);//safety store
+        var_s = dup_vartype(r);//restore outer gen
     }
     vartype *x, *y, *z, *t, *lx;
     x = recall_var("\x06X", 2);
@@ -1112,17 +1115,26 @@ int docmd_srcl(arg_struct *arg) {
     return ERR_NONE;
 }
 
+int docmd_atom(arg_struct *arg) {
+    //Read VARMENU docs
+    if(var_s != NULL) free_vartype(var_s);//safe
+    var_s = new_string(reg_alpha, reg_alpha_length);
+    return ERR_NONE;
+}
+
 //programatic limitation (no literal entry MVAR "xxx")
 static vartype* mvar_read() {
-    if(len_s == 0) return NULL;
-    vartype *r = recall_var(name_s, len_s);
+    if(var_s == NULL || ((vartype_string *)var_s)->length == 0) return NULL;
+    vartype *r = recall_var(((vartype_string *)var_s)->text,
+            ((vartype_string *)var_s)->length);
     if(r == NULL) return NULL;
     return dup_vartype(r);//new instance
 }
 
 static int mvar_write(vartype *val) {
-    if(len_s == 0) return ERR_NONEXISTENT;
-    return store_var(name_s, len_s, dup_vartype(val), true);//temporary local
+    if(var_s == NULL || ((vartype_string *)var_s)->length == 0) return ERR_NONEXISTENT;
+    return store_var(((vartype_string *)var_s)->text,
+            ((vartype_string *)var_s)->length, dup_vartype(val), true);//temporary local
 }
 
 int docmd_msto(arg_struct *arg) {

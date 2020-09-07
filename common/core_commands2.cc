@@ -934,11 +934,11 @@ int docmd_tone(arg_struct *arg) {
     return ERR_NONE;
 }
 
-char name_s[7];
-int len_s = 0; 
+//char name_s[7];
+//int len_s = 0; 
 
 int docmd_mvar(arg_struct *arg) {
-    string_copy(name_s, &len_s, arg->val.text, arg->length);
+    //string_copy(name_s, &len_s, arg->val.text, arg->length);
     return ERR_NONE;
 }
 

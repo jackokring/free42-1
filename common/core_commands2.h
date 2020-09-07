@@ -21,8 +21,8 @@
 #include "free42.h"
 #include "core_globals.h"
 
-extern char name_s[7];
-extern int len_s; 
+//extern char name_s[7];
+//extern int len_s; 
 
 int docmd_sf(arg_struct *arg);
 int docmd_cf(arg_struct *arg);
