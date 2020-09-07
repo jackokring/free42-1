@@ -360,8 +360,8 @@
 #define CMD_SRCL        319
 #define CMD_WCSD        320
 #define CMD_SSTO        321
-#define CMD_CLRD        322
-#define CMD_APPD        323
+#define CMD_MSTO        322
+#define CMD_MRCL        323
 #define CMD_GETN        324
 #define CMD_PUTN        325
 #define CMD_GETZ        326

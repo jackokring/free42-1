@@ -1103,6 +1103,30 @@ int docmd_srcl(arg_struct *arg) {
     return ERR_NONE;
 }
 
+//programatic limitation (no literal entry MVAR "xxx")
+static vartype* mvar_read() {
+    if(len_s == 0) return NULL;
+    vartype *r = recall_var(name_s, len_s);
+    if(r == NULL) return NULL;
+    return dup_vartype(r);//new instance
+}
+
+static int mvar_write(vartype *val) {
+    if(len_s == 0) return ERR_NONEXISTENT;
+    return store_var(name_s, len_s, dup_vartype(val), true);//temporary local
+}
+
+int docmd_msto(arg_struct *arg) {
+    return mvar_write(reg_x);
+}
+
+int docmd_mrcl(arg_struct *arg) {
+    vartype *r = mvar_read();
+    if(r == NULL) return ERR_NONEXISTENT;
+    recall_result(r);
+    return ERR_NONE;
+}
+
 int docmd_integ(arg_struct *arg) {
     int err;
     if (arg->type == ARGTYPE_IND_NUM
