@@ -1051,6 +1051,10 @@ static vartype *var_s = NULL;
 
 int docmd_ssto(arg_struct *arg) {
     int err;
+    if(var_s != NULL) {
+        err = store_var("\x06M", 2, dup_vartype(var_s), true);//local mvar
+        if(err != ERR_NONE) return err;
+    }
     err = store_var("\x06X", 2, dup_vartype(reg_x), true);//X
     if(err != ERR_NONE) return err;
     err = store_var("\x06Y", 2, dup_vartype(reg_y), true);//Y
@@ -1076,10 +1080,7 @@ int docmd_gen(arg_struct *arg) {
     if(err != ERR_NONE) return err;
     err = store_var("\x06G", 2, dup_vartype(args_s), true);//local pgmint
     if(err != ERR_NONE) return err;
-    if(var_s != NULL) {
-        err = store_var("\x06M", 2, dup_vartype(var_s), true);//local mvar
-        if(err != ERR_NONE) return err;
-    }
+    //defer
     return docmd_ssto(arg);//chain
 }
 
