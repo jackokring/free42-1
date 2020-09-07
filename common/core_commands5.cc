@@ -1066,6 +1066,8 @@ int docmd_gen(arg_struct *arg) {
     if(err != ERR_NONE) return err;
     err = store_var("\x06G", 2, dup_vartype(args_s), true);//local pgmint
     if(err != ERR_NONE) return err;
+    err = store_var("\x06M", 2, new_string(name_s, len_s), true);//local mvar
+    if(err != ERR_NONE) return err;
     return docmd_ssto(arg);//chain
 }
 
@@ -1074,6 +1076,11 @@ int docmd_srcl(arg_struct *arg) {
     if(r != NULL) {//outer gen
         if(args_s != NULL) free_vartype(args_s);//safety store
         args_s = dup_vartype(r);//restore outer gen
+    }
+    r = recall_var("\x06M", 2);
+    if(r != NULL) {//outer mvar
+        string_copy(name_s, &len_s, ((vartype_string *)r)->text,
+                ((vartype_string *)r)->length);
     }
     vartype *x, *y, *z, *t, *lx;
     x = recall_var("\x06X", 2);
