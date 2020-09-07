@@ -622,7 +622,8 @@ static int corr_helper(int modl, phloat *r) {
                     - model.qslope * model.xy + model.qslope * model.qslope * model.x2
                                                 - model.qyint * model.qyint;
         /* y2 - 2yMy - (My)2 */
-        tr = model.y2 - (2 + 1 / model.n) * model.y * model.y / model.n; 
+        tr = model.y2 - (2 + 1 / model.n) * model.y * model.y / model.n;
+        if(tr == 0) return ERR_STAT_MATH_ERROR;
         tr = 1 - v / tr;
         if(tr < 0) tr = 0;
     } else {
@@ -905,9 +906,12 @@ int docmd_wsd(arg_struct *arg) {
     int err = get_summation();
     if (err != ERR_NONE)
         return err;
-    if (sum.y == 0 || !flags.f.all_sigma) //origin of non-linearity is weighted SD
+    wsd = (sum.y - 1);
+    if (wsd == 0 || !flags.f.all_sigma) //origin of non-linearity is weighted SD
         return ERR_STAT_MATH_ERROR;
-    wsd = (sum.x2y - (sum.xy * sum.xy / sum.y)) / (sum.y - 1);
+    wsd = (sum.x2y - (sum.xy * sum.xy / sum.y)) / wsd;
+    if (wsd < 0)
+        return ERR_STAT_MATH_ERROR;
     if (p_isinf(wsd))
         v = new_real(POS_HUGE_PHLOAT);
     else
@@ -925,7 +929,12 @@ int docmd_wcsd(arg_struct *arg) {
     int err = get_summation();
     if (err != ERR_NONE)
         return err;
-    wsd_c = ((sum.y * sum.y) - sum.y) / ((sum.y * sum.y) - sum.y2);
+    wsd_c = ((sum.y * sum.y) - sum.y2);
+    if (wsd_c == 0) 
+        return ERR_STAT_MATH_ERROR;
+    wsd_c = ((sum.y * sum.y) - sum.y) / wsd_c;
+    if (wsd_c < 0)
+        return ERR_STAT_MATH_ERROR;
     if (p_isinf(wsd_c))
         v = new_real(POS_HUGE_PHLOAT);
     else
