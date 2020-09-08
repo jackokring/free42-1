@@ -420,6 +420,7 @@ int docmd_fix(arg_struct *arg) {
     flags.f.digits_bit0 = (num & 1) != 0;
     flags.f.fix_or_all = 1;
     flags.f.eng_or_all = 0;
+    flags.f.qpi = 0;
     if (flags.f.trace_print && flags.f.printer_exists)
         docmd_prx(NULL);
     return ERR_NONE;
@@ -441,6 +442,7 @@ int docmd_sci(arg_struct *arg) {
     flags.f.digits_bit0 = (num & 1) != 0;
     flags.f.fix_or_all = 0;
     flags.f.eng_or_all = 0;
+    flags.f.qpi = 0;
     if (flags.f.trace_print && flags.f.printer_exists)
         docmd_prx(NULL);
     return ERR_NONE;
@@ -462,6 +464,7 @@ int docmd_eng(arg_struct *arg) {
     flags.f.digits_bit0 = (num & 1) != 0;
     flags.f.fix_or_all = 0;
     flags.f.eng_or_all = 1;
+    flags.f.qpi = 0;
     if (flags.f.trace_print && flags.f.printer_exists)
         docmd_prx(NULL);
     return ERR_NONE;
@@ -474,6 +477,7 @@ int docmd_all(arg_struct *arg) {
     flags.f.digits_bit0 = 0;
     flags.f.fix_or_all = 1;
     flags.f.eng_or_all = 1;
+    flags.f.qpi = 0;
     if (flags.f.trace_print && flags.f.printer_exists)
         docmd_prx(NULL);
     return ERR_NONE;
