@@ -54,6 +54,8 @@ int docmd_pixel(arg_struct *arg);
 int docmd_beep(arg_struct *arg);
 int docmd_tone(arg_struct *arg);
 int docmd_mvar(arg_struct *arg);
+int docmd_qpi(arg_struct *arg);
+int phloat2qpistring(vartype_real *val, char *buf, int buflen);
 int docmd_varmenu(arg_struct *arg);
 int docmd_getkey(arg_struct *arg);
 int docmd_menu(arg_struct *arg);

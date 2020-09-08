@@ -237,7 +237,7 @@ menu_spec menus[] = {
                       { { 0x2000 + CMD_DEG,   0, "" },
                         { 0x2000 + CMD_RAD,   0, "" },
                         { 0x2000 + CMD_GRAD,  0, "" },
-                        { 0x1000 + CMD_NULL,  0, "" },
+                        { 0x2000 + CMD_QPI,   0, "" },
                         { 0x2000 + CMD_RECT,  0, "" },
                         { 0x2000 + CMD_POLAR, 0, "" } } },
     { /* MENU_MODES2 */ MENU_NONE, MENU_MODES3, MENU_MODES1,
@@ -3747,7 +3747,7 @@ void hard_reset(int reason) {
     flags.f.two_line_message = 0;
     flags.f.prgm_mode = 0;
     /* flags.f.VIRTUAL_input = 0; */
-    flags.f.f54 = 0;
+    flags.f.qpi = 0;
     flags.f.printer_exists = 0;
     flags.f.lin_fit = 1;
     flags.f.log_fit = 0;

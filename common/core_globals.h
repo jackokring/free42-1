@@ -335,7 +335,7 @@ typedef union {
         char two_line_message;
         char prgm_mode;
         char VIRTUAL_input;
-        char f54;
+        char qpi;
         char printer_exists;
         char lin_fit;
         char log_fit;

@@ -1486,7 +1486,7 @@ static extension_struct extensions[] = {
     { CMD_FPTEST,  CMD_FPTEST,  &core_settings.enable_ext_fptest   },
     { CMD_LSTO,    CMD_BRESET,  &core_settings.enable_ext_prog     },
     { CMD_WSD,     CMD_WSD,     &core_settings.enable_ext_jacko    },
-    { CMD_QSIGMA,  CMD_ATOM,    &core_settings.enable_ext_jacko    },
+    { CMD_QSIGMA,  CMD_QPI,     &core_settings.enable_ext_jacko    },
     { CMD_NULL,    CMD_NULL,    NULL                               }
 };
 
@@ -1503,7 +1503,7 @@ static int ext_fcn_cat[] = {
     CMD_LSTO, -1, CMD_WSIZE_T,
     CMD_ACCEL, CMD_LOCAT, CMD_HEADING,
     CMD_FPTEST, CMD_WSD,
-    CMD_QSIGMA, -1, CMD_ATOM,
+    CMD_QSIGMA, -1, CMD_QPI,
     CMD_NULL
 };
 
@@ -2084,6 +2084,9 @@ void redisplay() {
                             break;
                         case CMD_QSIGMA:
                             is_flag = flags.f.q_sigma;
+                            break;
+                        case CMD_QPI:
+                            is_flag = flags.f.qpi;
                             break;
                         case CMD_QF:
                             is_flag = flags.f.q_sigma

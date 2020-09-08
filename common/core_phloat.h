@@ -25,6 +25,7 @@
 //without it NUMBER_FORMAT_BID128 can't be imported
 //BUT the intel library does not have to be used
 #ifdef BCD_MATH
+#define BID_ERROR
 #include "bid_conf.h"
 #include "bid_functions.h"
 #endif

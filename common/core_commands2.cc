@@ -942,6 +942,16 @@ int docmd_mvar(arg_struct *arg) {
     return ERR_NONE;
 }
 
+int docmd_qpi(arg_struct *arg) {
+    flags.f.qpi = !flags.f.qpi;
+    return ERR_NONE;
+}
+
+int phloat2qpistring(vartype_real *val, char *buf, int buflen) {
+    //TODO
+    return 0;//length
+}
+
 int docmd_varmenu(arg_struct *arg) {
     int saved_prgm = current_prgm;
     int prgm;

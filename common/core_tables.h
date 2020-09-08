@@ -363,7 +363,7 @@
 #define CMD_MSTO        322
 #define CMD_MRCL        323
 #define CMD_ATOM        324
-#define CMD_PUTN        325
+#define CMD_QPI         325
 #define CMD_GETZ        326
 #define CMD_PUTZ        327
 #define CMD_DELP        328
