@@ -973,6 +973,39 @@ static phloat next_cf(phloat *r, phloat *num, phloat *den, bool first = false) {
     return ip; 
 }
 
+int docmd_cfr(arg_struct *arg) {
+    if (reg_x->type == TYPE_STRING)
+        return ERR_ALPHA_DATA_IS_INVALID;
+    else if (reg_x->type != TYPE_REAL)
+        return ERR_INVALID_TYPE;
+    if (reg_y->type == TYPE_STRING)
+        return ERR_ALPHA_DATA_IS_INVALID;
+    else if (reg_y->type != TYPE_REAL)
+        return ERR_INVALID_TYPE;
+
+    phloat *y = &(((vartype_real *) reg_y)->x);
+    phloat x = ((vartype_real *) reg_x)->x;
+
+    if (x <= -2147483648.0 || x >= 2147483648.0)
+        return ERR_DIMENSION_ERROR;
+    int4 xx = to_int4(x);
+    if (xx == 0)
+        return ERR_DIMENSION_ERROR;
+    if (xx < 0)
+        xx = -xx;
+    vartype *sig = new_realmatrix(xx, 1);
+    if (sig == NULL)
+        return ERR_INSUFFICIENT_MEMORY;
+    vartype_realmatrix *r = (vartype_realmatrix *) sig;
+    phloat *data = r->array->data;
+    phloat void1, void2;
+    for(int i = 0; i < xx; ++i) {
+        data[i] = next_cf(y, &void1, &void2, i == 0);
+    }
+    free_vartype(reg_x);
+    reg_x = sig;//return filled matrix
+}
+
 int phloat2qpistring(vartype_real *val, char *buf, int buflen) {
     phloat x = val->x;
     /*If x=zero then return (x)

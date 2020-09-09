@@ -376,7 +376,7 @@ static const command_spec cmd_array[] =
     { /* MRCL */        "MRCL",                 4, docmd_mrcl,        0x0000a7c9, ARG_NONE,  FLAG_NONE },
     { /* ATOM */        "ATOM",                 4, docmd_atom,        0x0000a7ca, ARG_NONE,  FLAG_NONE },
     { /* QPI */         "QPI",                  3, docmd_qpi,         0x0000a7cb, ARG_NONE,  FLAG_NONE },
-    { /* GETZ */        "GETZ",                 4, docmd_xrom,        0x0000a7cc, ARG_NONE,  FLAG_NONE },
+    { /* CFR */         "CFR",                  3, docmd_cfr,         0x0000a7cc, ARG_NONE,  FLAG_NONE },
     { /* PUTZ */        "PUTZ",                 4, docmd_xrom,        0x0000a7cd, ARG_NONE,  FLAG_NONE },
     { /* DELP */        "DELP",                 4, docmd_xrom,        0x0000a7ce, ARG_NONE,  FLAG_NONE },
 
