@@ -947,7 +947,55 @@ int docmd_qpi(arg_struct *arg) {
     return ERR_NONE;
 }
 
+static phloat num_old;
+static phloat den_old;
+
+static phloat next_cf(phloat *r, phloat *num, phloat *den, bool first = false) {
+    float ip = floor(*r);
+    float rp = (*r - ip);
+    if(first) {
+        num_old = 0;
+        den_old = 1;
+        *num = 1;
+        *den = 0;
+    }
+    phloat tmp = num_old;
+    num_old = *num;
+    (*num) * ip + tmp;
+    tmp = den_old;
+    den_old = *den;
+    (*den) * ip + tmp;
+    if(rp != 0) {
+        *r = 1 / rp;
+    } else {
+        *r = 0;//terminal
+    }
+    return ip; 
+}
+
 int phloat2qpistring(vartype_real *val, char *buf, int buflen) {
+    phloat x = val->x;
+    /*If x=zero then return (x)
+	nom,den=approximate(x)
+	If den < 100 then return (nom/den)		% Early abort
+	nom2,den2=approximate(x*x)
+	If (x*x<5E5) & (den2<1000) & (den2<den) then	% Choose 'smaller'
+		nom,den=sign(x)*nom2,den2
+		If nom<10 then return (sqrt(nom,den))	% Early abort
+	nom2,den2=approximate(x/pi)
+	If (|x/pi<100) & (den2<1000) & (den2<den) then	% Choose 'smaller'
+		nom,den=nom2,den2
+		If nom<10 then return (nom/den*pi)	% Early abort
+	nom2,den2=approximate(exp(x))
+	If (den2<50) & (den2<den) then			% Choose 'smaller'
+		nom,den=nom2,den2
+		If nom<10 then return (ln(nom/den))	% Early abort
+	nom2,den2=approximate(ln(x))
+	If (x>0) & (den2<50) & (den2<den) then		% Choose 'smaller'
+		nom,den=nom2,den2
+		If nom<10 then return (exp(nom/den))	% Early abort
+	Return (nom/den) in the found minimal form */
+
     //TODO
     return 0;//length
 }

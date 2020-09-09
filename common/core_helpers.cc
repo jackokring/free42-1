@@ -1147,7 +1147,11 @@ int vartype2string(const vartype *v, char *buf, int buflen, int max_mant_digits)
     switch (v->type) {
 
         case TYPE_REAL:
-            if(flags.f.qpi) return phloat2qpistring((vartype_real *)v, buf, buflen);
+            if(flags.f.qpi) {
+                int count_digit = phloat2qpistring((vartype_real *)v, buf, buflen);
+                if(count_digit != 0) return count_digit;
+                //baulk convert by returning no chars
+            }
             return phloat2string(((vartype_real *) v)->x, buf, buflen,
                                  1, digits, dispmode,
                                  flags.f.thousands_separators,
