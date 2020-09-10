@@ -974,6 +974,37 @@ static phloat next_cf(phloat *r, phloat *num, phloat *den, bool first = false) {
     return ip; 
 }
 
+static int digits_approx(phloat num, phloat den, int xchars) {
+    int extra = 0;
+    int4 x = to_int4(log10(den) + 2 + xchars);
+    if(num <= 0) {
+        num = -num;
+        ++x;//sign
+    }
+    if(num == 0) return x; 
+    return to_int4(log10(num)) + x;
+}
+
+static phloat approx_best(phloat *num, phloat *den, int xchars, phloat x, int maxchars) {
+    int count = 0;
+    phloat tmp = x;
+    do {
+        next_cf(&tmp, num, den, count == 0);
+        ++count;
+        if(count > 25) break;//kind of arbitrary
+        if (*num <= -2147483648.0 || *num >= 2147483648.0 || *den >= 2147483648.0) {
+            *num = 0;
+            break;
+        }
+    } while(digits_approx(*num, *den, xchars) <= maxchars);
+    *num = num_old;
+    *den = den_old;
+    if(digits_approx(*num, *den, xchars) > maxchars) {
+        *num = 0;
+    }
+    return abs(x - num_old / den_old);
+}
+
 int docmd_cfr(arg_struct *arg) {
     if (reg_x->type == TYPE_STRING)
         return ERR_ALPHA_DATA_IS_INVALID;
@@ -1007,31 +1038,113 @@ int docmd_cfr(arg_struct *arg) {
     reg_x = sig;//return filled matrix
 }
 
+static void draw_chars_qpi(phloat num, phloat den, char *buf,
+                int buflen, int *count, bool pi) {
+    //return drawn rational with pi before div?
+    *count += int2string(num, buf + *count, buflen - *count);
+    if(pi) string2buf(buf, buflen, count, "\007", 1);
+    string2buf(buf, buflen, count, "/", 1);
+    *count += int2string(den, buf + *count, buflen - *count);
+}
+
+#define QRATIONAL 0
+#define QROOT 1
+#define QPI 2
+#define QLOG 3
+#define QEXP 4
+
 int phloat2qpistring(vartype_real *val, char *buf, int buflen) {
     phloat x = val->x;
-    /*If x=zero then return (x)
-	nom,den=approximate(x)
-	If den < 100 then return (nom/den)		% Early abort
-	nom2,den2=approximate(x*x)
-	If (x*x<5E5) & (den2<1000) & (den2<den) then	% Choose 'smaller'
-		nom,den=sign(x)*nom2,den2
-		If nom<10 then return (sqrt(nom,den))	% Early abort
-	nom2,den2=approximate(x/pi)
-	If (|x/pi<100) & (den2<1000) & (den2<den) then	% Choose 'smaller'
-		nom,den=nom2,den2
-		If nom<10 then return (nom/den*pi)	% Early abort
-	nom2,den2=approximate(exp(x))
-	If (den2<50) & (den2<den) then			% Choose 'smaller'
-		nom,den=nom2,den2
-		If nom<10 then return (ln(nom/den))	% Early abort
-	nom2,den2=approximate(ln(x))
-	If (x>0) & (den2<50) & (den2<den) then		% Choose 'smaller'
-		nom,den=nom2,den2
-		If nom<10 then return (exp(nom/den))	% Early abort
-	Return (nom/den) in the found minimal form */
-
-    //TODO
-    return 0;//length
+    if(x == 0) return 0;//default to real print
+    int state;
+    phloat n, d, err, fnx, err2, n2, d2;
+    err = approx_best(&n, &d, 1, x, buflen);// one extra divide char
+    state = QRATIONAL;
+    fnx = x * x;
+    bool minus_prefix = false;
+    bool pi = false;
+    if(x < 0) {
+        minus_prefix = true;
+    }
+    err2 = approx_best(&n2, &d2, minus_prefix ? 5 : 4, fnx, buflen);// root, brakets and divide
+    if(err2 < err && n2 != 0) {
+        state = QROOT;
+        err = err2;
+        n = n2;
+        d = d2;
+    }
+    fnx = x / PI;
+    err2 = approx_best(&n2, &d2, 2, fnx, buflen);// pi and divide
+    if(err2 < err && n2 != 0) {
+        state = QPI;
+        err = err2;
+        n = n2;
+        d = d2;
+        minus_prefix = false;
+        pi = true;
+    }
+    bool flip = false;
+    if(x > 0) {
+        x = -x;//contain infinity
+        flip = true;
+    }
+    fnx = exp(x);
+    err2 = approx_best(&n2, &d2, 5, fnx, buflen);// ln, brakets and divide (-?)
+    if(err2 < err && n2 != 0) {
+        state = QLOG;
+        err = err2;
+        n = flip ? d2 : n2;
+        d = flip ? n2 : d2;
+        minus_prefix = false;
+        pi = false;
+    }
+    flip = false;
+    if(x < 0) {
+        x = -x;
+        flip = true;
+    }
+    fnx = log(x);
+    err2 = approx_best(&n2, &d2, flip ? 7 : 6, fnx, buflen);// exp, brakets and divide
+    if(err2 < err && n2 != 0) {
+        state = QLOG;
+        //err = err2;
+        n = n2;
+        d = d2;
+        minus_prefix = flip;
+        pi = false;
+    }
+    if(n == 0) return 0;//default real
+    int count = 0;
+    //pramble TODO
+    if(minus_prefix) {
+        string2buf(buf, buflen, &count, "-", 1);
+    }
+    switch(state) {
+        case QROOT:
+            string2buf(buf, buflen, &count, "\002(", 2);
+            break;
+        case QLOG:
+            string2buf(buf, buflen, &count, "LN(", 3);
+            break;
+        case QEXP:
+            string2buf(buf, buflen, &count, "EXP(", 4);
+            break;
+        default:
+            break;
+    }
+    //draw rational
+    draw_chars_qpi(n, d, buf, buflen, &count, pi);
+    //postamble TODO
+    switch(state) {
+        case QROOT:
+        case QLOG:
+        case QEXP:
+            string2buf(buf, buflen, &count, ")", 1);
+            break;
+        default:
+            break;
+    }
+    return count;//length
 }
 
 int docmd_ltr(arg_struct *arg) {
