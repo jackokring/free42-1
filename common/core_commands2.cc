@@ -977,12 +977,13 @@ static phloat next_cf(phloat *r, phloat *num, phloat *den, bool first = false) {
 static int digits_approx(phloat num, phloat den, int xchars) {
     int extra = 0;
     int4 x = to_int4(log10(den) + 2 + xchars);
+    if(den == 1) x -= 2;
     if(num <= 0) {
         num = -num;
         ++x;//sign
     }
-    if(num == 0) return x; 
-    return to_int4(log10(num)) + x;
+    if(num != 0) x += to_int4(log10(num)); 
+    return x;
 }
 
 static phloat approx_best(phloat *num, phloat *den, int xchars, phloat x, int maxchars) {
@@ -1038,13 +1039,38 @@ int docmd_cfr(arg_struct *arg) {
     reg_x = sig;//return filled matrix
 }
 
-static void draw_chars_qpi(phloat num, phloat den, char *buf,
+static void draw_chars_qpi(int4 num, int4 den, char *buf,
                 int buflen, int *count, bool pi) {
     //return drawn rational with pi before div?
     *count += int2string(num, buf + *count, buflen - *count);
     if(pi) string2buf(buf, buflen, count, "\007", 1);
+    if(den == 1) return;//as not sensible to print
     string2buf(buf, buflen, count, "/", 1);
     *count += int2string(den, buf + *count, buflen - *count);
+}
+
+static bool reduce_surd(phloat *n, phloat *n2) {
+    int max = to_int4(sqrt(*n));
+    phloat d;
+    int j;
+    for(int i = 1; i <= max; i +=2) {
+        j = (i == 1) ? 2 : i;
+        d = *n / (j * j);
+        if(d == floor(d)) {
+            *n2 *= j;
+            *n = d;
+            max = to_int4(sqrt(*n));//lower bound
+            i -= 2;//try more
+        }
+    }
+    if(*n2 != 1) return true;
+    return false;
+}
+
+static bool has_surd(phloat *num, phloat *den, phloat *n2, phloat *d2) {
+    bool has = reduce_surd(num, n2);
+    has |= reduce_surd(den, d2);
+    return has;
 }
 
 #define QRATIONAL 0
@@ -1057,7 +1083,7 @@ int phloat2qpistring(vartype_real *val, char *buf, int buflen) {
     phloat x = val->x;
     if(x == 0) return 0;//default to real print
     int state;
-    phloat n, d, err, fnx, err2, n2, d2;
+    phloat n, d, err, fnx, err2, n2, d2, sn, sd;
     err = approx_best(&n, &d, 1, x, buflen);// one extra divide char
     state = QRATIONAL;
     fnx = x * x;
@@ -1072,6 +1098,18 @@ int phloat2qpistring(vartype_real *val, char *buf, int buflen) {
         err = err2;
         n = n2;
         d = d2;
+        sn = 1;
+        sd = 1;
+        int c = digits_approx(n, d, 0);//for shortness test
+        if(has_surd(&n, &d, &sn, &sd)) {
+            if(sn == 1) c += 1;//as not shown so bettr by 1
+            if(digits_approx(n, d, 0) + digits_approx(sn, sd, 1) > c) {
+                n *= sn * sn;
+                d *= sd * sd;
+                sn = 1;
+                sd = 1;
+            }
+        }
     }
     fnx = x / PI;
     err2 = approx_best(&n2, &d2, 2, fnx, buflen);// pi and divide
@@ -1115,12 +1153,15 @@ int phloat2qpistring(vartype_real *val, char *buf, int buflen) {
     }
     if(n == 0) return 0;//default real
     int count = 0;
+    int4 num = to_int4(n);
+    int4 den = to_int4(d);
     //pramble TODO
     if(minus_prefix) {
         string2buf(buf, buflen, &count, "-", 1);
     }
     switch(state) {
         case QROOT:
+            if(sn != 1) count += int2string(to_int4(sn), buf + count, buflen - count);
             string2buf(buf, buflen, &count, "\002(", 2);
             break;
         case QLOG:
@@ -1133,10 +1174,16 @@ int phloat2qpistring(vartype_real *val, char *buf, int buflen) {
             break;
     }
     //draw rational
-    draw_chars_qpi(n, d, buf, buflen, &count, pi);
+    draw_chars_qpi(num, den, buf, buflen, &count, pi);
     //postamble TODO
     switch(state) {
         case QROOT:
+            string2buf(buf, buflen, &count, ")", 1);
+            if(sd != 1) {
+                string2buf(buf, buflen, &count, "/", 1);
+                count += int2string(to_int4(sd), buf + count, buflen - count);
+            }
+            break;
         case QLOG:
         case QEXP:
             string2buf(buf, buflen, &count, ")", 1);
