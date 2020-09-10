@@ -1042,7 +1042,7 @@ int docmd_addr(arg_struct *arg) {
     free_vartype(reg_y);
     //free_vartype(reg_x);
     reg_y = res;
-    reg_x = add;
+    unary_result(add);//print trace
     return ERR_NONE;
 }
 
@@ -1108,11 +1108,11 @@ int docmd_srcl(arg_struct *arg) {
     free_vartype(reg_z);
     free_vartype(reg_t);
     free_vartype(reg_lastx);
-    reg_x = dup_vartype(x);
     reg_y = dup_vartype(y);
     reg_z = dup_vartype(z);
     reg_t = dup_vartype(t);
     reg_lastx = dup_vartype(lx); 
+    unary_result(x);//print trace
     return ERR_NONE;
 }
 

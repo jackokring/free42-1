@@ -1034,8 +1034,7 @@ int docmd_cfr(arg_struct *arg) {
     for(int i = 0; i < xx; ++i) {
         data[i] = next_cf(y, &void1, &void2, i == 0);
     }
-    free_vartype(reg_x);
-    reg_x = sig;//return filled matrix
+    unary_result(sig);//replace and trace
 }
 
 static void draw_chars_qpi(int4 num, int4 den, char *buf,
