@@ -26,6 +26,7 @@
 #include "core_math2.h"
 #include "core_sto_rcl.h"
 #include "core_variables.h"
+#include "core_globals.h"
 #include "shell.h"
 
 
@@ -1031,6 +1032,23 @@ int phloat2qpistring(vartype_real *val, char *buf, int buflen) {
 
     //TODO
     return 0;//length
+}
+
+int docmd_ltr(arg_struct *arg) {
+    int err;
+    int pgrm_tmp;
+    int4 pc_tmp;
+    bool stop;
+    if(get_rtn_level() == 0)
+        return ERR_RESTRICTED_OPERATION;//must have outer routine
+    pop_rtn_addr(&pgrm_tmp, &pc_tmp, &stop, false);//avoid local capture issue?
+    err = push_rtn_addr(current_prgm, pc);
+    if(err != ERR_NONE)
+        return err;
+    //leave at bad instruction
+    current_prgm = pgrm_tmp;
+    pc = pc_tmp;
+    return ERR_NONE;
 }
 
 int docmd_varmenu(arg_struct *arg) {

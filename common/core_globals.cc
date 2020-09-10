@@ -2787,8 +2787,11 @@ static void remove_locals() {
     update_catalog();
 }
 
-void pop_rtn_addr(int *prgm, int4 *pc, bool *stop) {
-    remove_locals();
+void pop_rtn_addr(int *prgm, int4 *pc, bool *stop, bool pop) {
+    //introduced pop param (default true) for LTR command
+    if(pop) {
+        remove_locals();
+    }
     if (rtn_level == 0) {
         *prgm = -1;
         *pc = -1;
