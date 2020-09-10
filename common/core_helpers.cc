@@ -1148,7 +1148,8 @@ int vartype2string(const vartype *v, char *buf, int buflen, int max_mant_digits)
 
         case TYPE_REAL:
             if(flags.f.qpi) {//printing one line?
-                int count_digit = phloat2qpistring((vartype_real *)v, buf, 20);
+                int bufmax = (buflen < 20) ? buflen : 20;
+                int count_digit = phloat2qpistring((vartype_real *)v, buf, bufmax);
                 //eliminates cases as 18 lowest but COMPLEX
                 if(count_digit != 0) return count_digit;
                 //baulk convert by returning no chars
