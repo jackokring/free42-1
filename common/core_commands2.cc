@@ -986,7 +986,7 @@ static int digits_approx(phloat num, phloat den, int xchars) {
     return x;
 }
 
-static phloat approx_best(phloat *num, phloat *den, int xchars, phloat x, int maxchars) {
+static void approx_best(phloat *num, phloat *den, int xchars, phloat x, int maxchars) {
     int count = 0;
     phloat tmp = x;
     do {
@@ -1003,7 +1003,6 @@ static phloat approx_best(phloat *num, phloat *den, int xchars, phloat x, int ma
     if(digits_approx(*num, *den, xchars) > maxchars) {
         *num = 0;
     }
-    return abs(x - num_old / den_old);
 }
 
 int docmd_cfr(arg_struct *arg) {
@@ -1083,8 +1082,8 @@ int phloat2qpistring(vartype_real *val, char *buf, int buflen) {
     phloat x = val->x;
     if(x == 0) return 0;//default to real print
     int state;
-    phloat n, d, err, fnx, err2, n2, d2, sn, sd;
-    err = approx_best(&n, &d, 1, x, buflen);// one extra divide char
+    phloat n, d, fnx, n2, d2, sn, sd;
+    approx_best(&n, &d, 1, x, buflen);// one extra divide char
     state = QRATIONAL;
     fnx = x * x;
     bool minus_prefix = false;
@@ -1092,10 +1091,9 @@ int phloat2qpistring(vartype_real *val, char *buf, int buflen) {
     if(x < 0) {
         minus_prefix = true;
     }
-    err2 = approx_best(&n2, &d2, minus_prefix ? 5 : 4, fnx, buflen);// root, brakets and divide
-    if(err2 < err && n2 != 0) {
+    approx_best(&n2, &d2, minus_prefix ? 5 : 4, fnx, buflen);// root, brakets and divide
+    if(d2 < d && n2 != 0) {
         state = QROOT;
-        err = err2;
         n = n2;
         d = d2;
         sn = 1;
@@ -1112,10 +1110,9 @@ int phloat2qpistring(vartype_real *val, char *buf, int buflen) {
         }
     }
     fnx = x / PI;
-    err2 = approx_best(&n2, &d2, 2, fnx, buflen);// pi and divide
-    if(err2 < err && n2 != 0) {
+    approx_best(&n2, &d2, 2, fnx, buflen);// pi and divide
+    if(d2 < d && n2 != 0) {
         state = QPI;
-        err = err2;
         n = n2;
         d = d2;
         minus_prefix = false;
@@ -1127,10 +1124,9 @@ int phloat2qpistring(vartype_real *val, char *buf, int buflen) {
         flip = true;
     }
     fnx = exp(x);
-    err2 = approx_best(&n2, &d2, 5, fnx, buflen);// ln, brakets and divide (-?)
-    if(err2 < err && n2 != 0) {
+    approx_best(&n2, &d2, 5, fnx, buflen);// ln, brakets and divide (-?)
+    if((flip ? d2 : n2) < d && n2 != 0) {
         state = QLOG;
-        err = err2;
         n = flip ? d2 : n2;
         d = flip ? n2 : d2;
         minus_prefix = false;
@@ -1142,10 +1138,9 @@ int phloat2qpistring(vartype_real *val, char *buf, int buflen) {
         flip = true;
     }
     fnx = log(x);
-    err2 = approx_best(&n2, &d2, flip ? 7 : 6, fnx, buflen);// exp, brakets and divide
-    if(err2 < err && n2 != 0) {
+    approx_best(&n2, &d2, flip ? 7 : 6, fnx, buflen);// exp, brakets and divide
+    if(d2 < d && n2 != 0) {
         state = QLOG;
-        //err = err2;
         n = n2;
         d = d2;
         minus_prefix = flip;
