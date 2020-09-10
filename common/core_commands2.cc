@@ -1082,7 +1082,7 @@ int phloat2qpistring(vartype_real *val, char *buf, int buflen) {
     phloat x = val->x;
     if(x == 0) return 0;//default to real print
     int state;
-    phloat n, d, fnx, n2, d2, sn, sd;
+    phloat n, d, fnx, n2, d2, sn, sd, sqd;
     approx_best(&n, &d, 1, x, buflen);// one extra divide char
     state = QRATIONAL;
     fnx = x * x;
@@ -1098,6 +1098,7 @@ int phloat2qpistring(vartype_real *val, char *buf, int buflen) {
         d = d2;
         sn = 1;
         sd = 1;
+        sqd = d2;//save actual
         int c = digits_approx(n, d, 0);//for shortness test
         if(has_surd(&n, &d, &sn, &sd)) {
             if(sn == 1) c += 1;//as not shown so bettr by 1
@@ -1111,10 +1112,10 @@ int phloat2qpistring(vartype_real *val, char *buf, int buflen) {
     }
     fnx = x / PI;
     approx_best(&n2, &d2, 2, fnx, buflen);// pi and divide
-    if(d2 < d && n2 != 0) {
+    if(d2 < sqd && n2 != 0) {
         state = QPI;
         n = n2;
-        d = d2;
+        sqd = d2;
         minus_prefix = false;
         pi = true;
     }
@@ -1125,10 +1126,10 @@ int phloat2qpistring(vartype_real *val, char *buf, int buflen) {
     }
     fnx = exp(x);
     approx_best(&n2, &d2, 5, fnx, buflen);// ln, brakets and divide (-?)
-    if((flip ? d2 : n2) < d && n2 != 0) {
+    if((flip ? d2 : n2) < sqd && n2 != 0) {
         state = QLOG;
         n = flip ? d2 : n2;
-        d = flip ? n2 : d2;
+        sqd = flip ? n2 : d2;
         minus_prefix = false;
         pi = false;
     }
@@ -1139,10 +1140,10 @@ int phloat2qpistring(vartype_real *val, char *buf, int buflen) {
     }
     fnx = log(x);
     approx_best(&n2, &d2, flip ? 7 : 6, fnx, buflen);// exp, brakets and divide
-    if(d2 < d && n2 != 0) {
+    if(d2 < sqd && n2 != 0) {
         state = QLOG;
         n = n2;
-        d = d2;
+        sqd = d2;
         minus_prefix = flip;
         pi = false;
     }
@@ -1157,6 +1158,7 @@ int phloat2qpistring(vartype_real *val, char *buf, int buflen) {
     switch(state) {
         case QROOT:
             if(sn != 1) count += int2string(to_int4(sn), buf + count, buflen - count);
+            sqd = d;//restore for correct display
             string2buf(buf, buflen, &count, "\002(", 2);
             break;
         case QLOG:
@@ -1169,7 +1171,7 @@ int phloat2qpistring(vartype_real *val, char *buf, int buflen) {
             break;
     }
     //draw rational
-    draw_chars_qpi(num, den, buf, buflen, &count, pi);
+    draw_chars_qpi(num, sqd, buf, buflen, &count, pi);
     //postamble TODO
     switch(state) {
         case QROOT:
