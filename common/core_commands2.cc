@@ -951,7 +951,8 @@ int docmd_qpi(arg_struct *arg) {
 static phloat num_old;
 static phloat den_old;
 
-static phloat next_cf(phloat *r, phloat *num, phloat *den, bool first = false) {
+static phloat next_cf(phloat *r, phloat *num, phloat *den,
+                bool first = false, bool rev = false) {
     float ip = floor(*r);
     float rp = (*r - ip);
     if(first) {
@@ -962,16 +963,20 @@ static phloat next_cf(phloat *r, phloat *num, phloat *den, bool first = false) {
     }
     phloat tmp = num_old;
     num_old = *num;
-    (*num) * ip + tmp;
+    *num = (*num) * ip + tmp;
     tmp = den_old;
     den_old = *den;
-    (*den) * ip + tmp;
-    if(rp != 0) {
-        *r = 1 / rp;
+    *den = (*den) * ip + tmp;
+    if(!rev) {
+        if(rp != 0) {
+            *r = 1 / rp;
+        } else {
+            *r = 0;//terminal
+        }
+        return ip;
     } else {
-        *r = 0;//terminal
+        return *num / *den;
     }
-    return ip; 
 }
 
 static int digits_approx(phloat num, phloat den, int xchars) {
@@ -1035,6 +1040,7 @@ int docmd_cfr(arg_struct *arg) {
         data[i] = next_cf(y, &void1, &void2, i == 0);
     }
     unary_result(sig);//replace and trace
+    return ERR_NONE;
 }
 
 static void draw_chars_qpi(int4 num, int4 den, char *buf,
