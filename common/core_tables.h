@@ -422,7 +422,27 @@
 #define CMD_BWRAP       375
 #define CMD_BRESET      376
 
-#define CMD_SENTINEL    377
+#define CMD_SDDX        377
+#define CMD_SRC         378
+#define CMD_SRC         379
+#define CMD_SRC         380
+
+#define CMD_SRC         381
+#define CMD_SRC         382
+#define CMD_SRC         383
+#define CMD_SRC         384
+
+#define CMD_SRC         385
+#define CMD_SRC         386
+#define CMD_SRC         387
+#define CMD_SRC         388
+
+#define CMD_SRC         389
+#define CMD_SRC         390
+#define CMD_SRC         391
+#define CMD_SRC         392
+
+#define CMD_SENTINEL    393
 
 
 /* command_spec.argtype */

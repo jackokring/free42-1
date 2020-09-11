@@ -45,6 +45,7 @@ int docmd_fcstx(arg_struct *arg);
 int docmd_fcsty(arg_struct *arg);
 int docmd_mean(arg_struct *arg);
 int docmd_sdev(arg_struct *arg);
+int docmd_sddx(arg_struct *arg);
 int docmd_slope(arg_struct *arg);
 int docmd_sum(arg_struct *arg);
 int docmd_wmean(arg_struct *arg);

@@ -899,6 +899,46 @@ int docmd_sdev(arg_struct *arg) {
     return ERR_NONE;
 }
 
+int docmd_sddx(arg_struct *arg) {
+    phloat sd;
+    int inf;
+    vartype *v;
+    int err = get_summation();
+    if (err != ERR_NONE)
+        return err;
+    sd = (sum.n - 1);
+    if (sd == 0 || !flags.f.all_sigma)
+        return ERR_STAT_MATH_ERROR;
+    sd = (sum.x2 - (sum.x * sum.x / sum.n)) / sd;
+    if (sd < 0 || sum.n == 0)
+        return ERR_STAT_MATH_ERROR;
+    sd *= sd;//s4
+    sd *= (sum.n - 3) * (sum.n - 1);
+    phloat sn = sum.n;
+    phloat m4 = (sum.x4 / sn);
+    sn *= sn;
+    sd /= sn;//get sd part
+    m4 -= 4 * sum.x * sum.x3 / sn;
+    sn *= sum.n;
+    phloat m2 = sum.x * sum.x;
+    m4 += 6 * m2 * sum.x2 / sn;
+    sn *= sum.n;
+    m2 *= m2;
+    m4 -= 3 * m2 / sn;//mu sub 4
+    m4 -= sd;
+    m4 /= sum.n;//Var(s^2)  
+    if (m4 < 0)
+        return ERR_STAT_MATH_ERROR;
+    if (p_isinf(m4))
+        v = new_real(POS_HUGE_PHLOAT);
+    else
+        v = new_real(sqrt(m4));
+    if (v == NULL)
+        return ERR_INSUFFICIENT_MEMORY;
+    recall_result(v);
+    return ERR_NONE;
+}
+
 int docmd_wsd(arg_struct *arg) {
     phloat wsd;
     int inf;

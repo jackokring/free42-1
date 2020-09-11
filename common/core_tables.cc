@@ -437,7 +437,28 @@ static const command_spec cmd_array[] =
     { /* YMD */        "YMD",                   3, docmd_ymd,         0x0000a7d5, ARG_NONE,  FLAG_NONE },
     { /* BSIGNED */    "BS\311GN\305\304",      7, docmd_bsigned,     0x0000a7d6, ARG_NONE,  FLAG_NONE },
     { /* BWRAP */      "BWR\301P",              5, docmd_bwrap,       0x0000a7d7, ARG_NONE,  FLAG_NONE },
-    { /* BRESET */     "BR\305S\305T",          6, docmd_breset,      0x0000a7d8, ARG_NONE,  FLAG_NONE }
+    { /* BRESET */     "BR\305S\305T",          6, docmd_breset,      0x0000a7d8, ARG_NONE,  FLAG_NONE },
+
+    /* LIB F Jacko */
+    { /* SDDX */        "SDDX",                 4, docmd_sddx,        0x0000a7f0, ARG_NONE,  FLAG_NONE },
+    { /* SRCL */        "SRCL",                 4, docmd_xrom,        0x0000a7f1, ARG_NONE,  FLAG_NONE },
+    { /* SRCL */        "SRCL",                 4, docmd_xrom,        0x0000a7f2, ARG_NONE,  FLAG_NONE },
+    { /* SRCL */        "SRCL",                 4, docmd_xrom,        0x0000a7f3, ARG_NONE,  FLAG_NONE },
+    
+    { /* SRCL */        "SRCL",                 4, docmd_xrom,        0x0000a7f4, ARG_NONE,  FLAG_NONE },
+    { /* SRCL */        "SRCL",                 4, docmd_xrom,        0x0000a7f5, ARG_NONE,  FLAG_NONE },
+    { /* SRCL */        "SRCL",                 4, docmd_xrom,        0x0000a7f6, ARG_NONE,  FLAG_NONE },
+    { /* SRCL */        "SRCL",                 4, docmd_xrom,        0x0000a7f7, ARG_NONE,  FLAG_NONE },
+
+    { /* SRCL */        "SRCL",                 4, docmd_xrom,        0x0000a7f8, ARG_NONE,  FLAG_NONE },
+    { /* SRCL */        "SRCL",                 4, docmd_xrom,        0x0000a7f9, ARG_NONE,  FLAG_NONE },
+    { /* SRCL */        "SRCL",                 4, docmd_xrom,        0x0000a7fa, ARG_NONE,  FLAG_NONE },
+    { /* SRCL */        "SRCL",                 4, docmd_xrom,        0x0000a7fb, ARG_NONE,  FLAG_NONE },
+
+    { /* SRCL */        "SRCL",                 4, docmd_xrom,        0x0000a7fc, ARG_NONE,  FLAG_NONE },
+    { /* SRCL */        "SRCL",                 4, docmd_xrom,        0x0000a7fd, ARG_NONE,  FLAG_NONE },
+    { /* SRCL */        "SRCL",                 4, docmd_xrom,        0x0000a7fe, ARG_NONE,  FLAG_NONE },
+    { /* SRCL */        "SRCL",                 4, docmd_xrom,        0x0000a7ff, ARG_NONE,  FLAG_NONE }
 };
 
 /*
