@@ -1236,6 +1236,25 @@ int docmd_ltr(arg_struct *arg) {
     return ERR_NONE;
 }
 
+static int mappable_erf(phloat x, phloat *y) {
+    *y = erf(x);
+    return ERR_NONE;
+}
+
+int docmd_erf(arg_struct *arg) {
+    if (reg_x->type == TYPE_STRING)
+        return ERR_ALPHA_DATA_IS_INVALID;
+    else if (reg_x->type == TYPE_COMPLEX || reg_x->type == TYPE_COMPLEXMATRIX)
+        return ERR_INVALID_TYPE;
+    else {
+        vartype *v;
+        int err = map_unary(reg_x, &v, mappable_erf, NULL);
+        if (err == ERR_NONE)
+            unary_result(v);
+        return err;
+    }
+}
+
 int docmd_varmenu(arg_struct *arg) {
     int saved_prgm = current_prgm;
     int prgm;

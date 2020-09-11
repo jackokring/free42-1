@@ -1487,7 +1487,8 @@ static extension_struct extensions[] = {
     { CMD_LSTO,    CMD_BRESET,  &core_settings.enable_ext_prog     },
     { CMD_WSD,     CMD_WSD,     &core_settings.enable_ext_jacko    },
     { CMD_QSIGMA,  CMD_CFA,     &core_settings.enable_ext_jacko    },
-    { CMD_SDDX,    CMD_RCSD,    &core_settings.enable_ext_jacko    },
+    //LIB F
+    { CMD_SDDX,    CMD_ERF,     &core_settings.enable_ext_jacko    },
     { CMD_NULL,    CMD_NULL,    NULL                               }
 };
 
@@ -1505,7 +1506,7 @@ static int ext_fcn_cat[] = {
     CMD_ACCEL, CMD_LOCAT, CMD_HEADING,
     CMD_FPTEST, CMD_WSD,
     CMD_QSIGMA, -1, CMD_CFA,
-    CMD_SDDX, -1, CMD_RCSD,
+    CMD_SDDX, -1, CMD_ERF,
     CMD_NULL
 };
 
