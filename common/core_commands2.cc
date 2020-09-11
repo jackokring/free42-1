@@ -975,7 +975,8 @@ static phloat next_cf(phloat *r, phloat *num, phloat *den,
         }
         return ip;
     } else {
-        return *num / *den;
+        *r = *num / *den;//in place replace acc
+        return *den;//accuracy??
     }
 }
 
