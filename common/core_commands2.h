@@ -55,6 +55,7 @@ int docmd_beep(arg_struct *arg);
 int docmd_tone(arg_struct *arg);
 int docmd_mvar(arg_struct *arg);
 int docmd_cfr(arg_struct *arg);
+int docmd_cfa(arg_struct *arg);
 int docmd_qpi(arg_struct *arg);
 int phloat2qpistring(vartype_real *val, char *buf, int buflen);
 int docmd_ltr(arg_struct *arg);

@@ -975,8 +975,7 @@ static phloat next_cf(phloat *r, phloat *num, phloat *den,
         }
         return ip;
     } else {
-        *r = *num / *den;//in place replace acc
-        return *den;//accuracy??
+        return *num / *den;//in place replace acc?
     }
 }
 
@@ -1031,7 +1030,7 @@ int docmd_cfr(arg_struct *arg) {
         return ERR_DIMENSION_ERROR;
     if (xx < 0)
         xx = -xx;
-    vartype *sig = new_realmatrix(xx, 1);
+    vartype *sig = new_realmatrix(1, xx);//better when ([1 x y z] * this) is considered 
     if (sig == NULL)
         return ERR_INSUFFICIENT_MEMORY;
     vartype_realmatrix *r = (vartype_realmatrix *) sig;
@@ -1041,6 +1040,29 @@ int docmd_cfr(arg_struct *arg) {
         data[i] = next_cf(y, &void1, &void2, i == 0);
     }
     unary_result(sig);//replace and trace
+    return ERR_NONE;
+}
+
+int docmd_cfa(arg_struct *arg) {
+    if (reg_x->type != TYPE_REALMATRIX)
+        return ERR_INVALID_TYPE;
+
+    phloat n, d;
+    int4 rows = ((vartype_realmatrix *) reg_x)->rows;
+    int4 cols = ((vartype_realmatrix *) reg_x)->columns;
+    realmatrix_data *x = ((vartype_realmatrix *) reg_x)->array;
+    vartype *dst = new_realmatrix(rows, cols);
+    if(dst == NULL)
+        return ERR_INSUFFICIENT_MEMORY;
+    realmatrix_data *z = ((vartype_realmatrix *) dst)->array;
+
+    for(int j = 0; j < rows; ++j) {
+        for(int i = 0; i < cols; ++i) {
+            //perform loops one one line at a time
+            *z[i + j * cols].data = next_cf(x[i + j * cols].data, &n, &d, (i == 0), true);
+        }
+    }
+    unary_result(dst);//replace and trace
     return ERR_NONE;
 }
 

@@ -366,7 +366,7 @@
 #define CMD_QPI         325
 #define CMD_CFR         326
 #define CMD_LTR         327
-#define CMD_DELP        328
+#define CMD_CFA         328
 /* Byron Foster's Bigstack extension (Obsolete) */
 //replaced by WSD weighted standard deviation (population) 
 #define CMD_WSD         329

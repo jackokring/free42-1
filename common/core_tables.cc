@@ -378,7 +378,7 @@ static const command_spec cmd_array[] =
     { /* QPI */         "QPI",                  3, docmd_qpi,         0x0000a7cb, ARG_NONE,  FLAG_NONE },
     { /* CFR */         "CFR",                  3, docmd_cfr,         0x0000a7cc, ARG_NONE,  FLAG_NONE },
     { /* LTR */         "LTR",                  3, docmd_ltr,         0x0000a7cd, ARG_NONE,  FLAG_NONE },
-    { /* DELP */        "DELP",                 4, docmd_xrom,        0x0000a7ce, ARG_NONE,  FLAG_NONE },
+    { /* CFA */         "CFA",                  3, docmd_cfa,         0x0000a7ce, ARG_NONE,  FLAG_NONE },
 
     /* Byron Foster's DROP for Bigstack (Obsolete) */
     //replaced by WSD
