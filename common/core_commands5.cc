@@ -901,7 +901,6 @@ int docmd_sdev(arg_struct *arg) {
 
 int docmd_sddx(arg_struct *arg) {
     phloat sd;
-    int inf;
     vartype *v;
     int err = get_summation();
     if (err != ERR_NONE)
@@ -933,6 +932,23 @@ int docmd_sddx(arg_struct *arg) {
         v = new_real(POS_HUGE_PHLOAT);
     else
         v = new_real(sqrt(m4));
+    if (v == NULL)
+        return ERR_INSUFFICIENT_MEMORY;
+    recall_result(v);
+    return ERR_NONE;
+}
+
+int docmd_rcsd(arg_struct *arg) {
+    phloat c;
+    vartype *v;
+    int err = get_summation();
+    if (err != ERR_NONE)
+        return err;
+    c = (sum.n - 1) / 2;
+    if (c < 0)
+        return ERR_STAT_MATH_ERROR;
+    float d = sqrt(c) * tgamma(c) / tgamma(sum.n / 2);
+    v = new_real(d);
     if (v == NULL)
         return ERR_INSUFFICIENT_MEMORY;
     recall_result(v);

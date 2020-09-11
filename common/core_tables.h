@@ -423,7 +423,7 @@
 #define CMD_BRESET      376
 
 #define CMD_SDDX        377
-#define CMD_SRC         378
+#define CMD_RCSD        378
 #define CMD_SRC         379
 #define CMD_SRC         380
 
