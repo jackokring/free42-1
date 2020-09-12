@@ -1254,6 +1254,8 @@ int docmd_erf(arg_struct *arg) {
 }
 
 int docmd_gin(arg_struct *arg) {
+    //based on the assumption that integration is an additive process
+    //and keep real and imaginary part seperate
     if (reg_x->type == TYPE_STRING)
         return ERR_ALPHA_DATA_IS_INVALID;
     else if (reg_x->type == TYPE_COMPLEX || reg_x->type == TYPE_COMPLEXMATRIX)
@@ -1261,18 +1263,17 @@ int docmd_gin(arg_struct *arg) {
     phloat x = ((vartype_real *)reg_x)->x;
     phloat y = ((vartype_real *)reg_y)->x;
     vartype *v;
-    bool pi = false;
+    phloat pi = 0;
     if(y < 0) {
         y = -y;
-        pi = true;//avoid complex rounding
+        pi = (x - 1) * PI;//avoid complex rounding
     }
-    x = (x - 1) * log(y) - (pi ? -y : y);
+    x = (x - 1) * log(y) - y;
     x = exp(x);
-    if (p_isinf(x) || y == 0) {
-        x = pi ? NEG_HUGE_PHLOAT : POS_HUGE_PHLOAT;//avoid range error
-    } else {
-        if(pi) x = -x;//flip back
+    if (p_isinf(x)) {
+        x = (x > 0) ? POS_HUGE_PHLOAT : NEG_HUGE_PHLOAT;//avoid range error
     }
+    if(pi != 0) x = x * cos(pi);//flip back real part
     v = new_real(x);
     if(v == NULL)
         return ERR_INSUFFICIENT_MEMORY;
