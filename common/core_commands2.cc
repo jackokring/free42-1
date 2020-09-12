@@ -1268,7 +1268,7 @@ int docmd_gin(arg_struct *arg) {
     }
     x = (x - 1) * log(y) - (pi ? -y : y);
     x = exp(x);
-    if (p_isinf(x)) {
+    if (p_isinf(x) || y == 0) {
         x = pi ? NEG_HUGE_PHLOAT : POS_HUGE_PHLOAT;//avoid range error
     } else {
         if(pi) x = -x;//flip back
