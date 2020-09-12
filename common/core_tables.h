@@ -425,7 +425,7 @@
 #define CMD_SDDX        377
 #define CMD_RCSD        378
 #define CMD_ERF         379
-#define CMD_SRC         380
+#define CMD_GIN         380
 
 #define CMD_SRC         381
 #define CMD_SRC         382

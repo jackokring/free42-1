@@ -504,7 +504,13 @@ static void matrix_helper2(int error, vartype *result) {
 static int matrix_helper1() {
     // caller must call get_model_summation(modl)
     vartype *sig = new_realmatrix(3, 3);
+    if(sig == NULL)
+        return ERR_INSUFFICIENT_MEMORY;
     vartype *col = new_realmatrix(1, 3);
+    if(col == NULL) {
+        free_vartype(sig);
+        return ERR_INSUFFICIENT_MEMORY;
+    }
     vartype_realmatrix *r = (vartype_realmatrix *) sig;
     phloat *data = r->array->data;
     data[0] = model.x4;

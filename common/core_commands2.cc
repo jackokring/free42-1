@@ -1246,13 +1246,38 @@ int docmd_erf(arg_struct *arg) {
         return ERR_ALPHA_DATA_IS_INVALID;
     else if (reg_x->type == TYPE_COMPLEX || reg_x->type == TYPE_COMPLEXMATRIX)
         return ERR_INVALID_TYPE;
-    else {
-        vartype *v;
-        int err = map_unary(reg_x, &v, mappable_erf, NULL);
-        if (err == ERR_NONE)
-            unary_result(v);
-        return err;
+    vartype *v;
+    int err = map_unary(reg_x, &v, mappable_erf, NULL);
+    if (err == ERR_NONE)
+        unary_result(v);
+    return err;
+}
+
+int docmd_gin(arg_struct *arg) {
+    if (reg_x->type == TYPE_STRING)
+        return ERR_ALPHA_DATA_IS_INVALID;
+    else if (reg_x->type == TYPE_COMPLEX || reg_x->type == TYPE_COMPLEXMATRIX)
+        return ERR_INVALID_TYPE;
+    phloat x = ((vartype_real *)reg_x)->x;
+    phloat y = ((vartype_real *)reg_y)->x;
+    vartype *v;
+    bool pi = false;
+    if(y < 0) {
+        y = -y;
+        pi = true;//avoid complex rounding
     }
+    x = (x - 1) * log(y) - (pi ? -y : y);
+    x = exp(x);
+    if (p_isinf(x)) {
+        x = pi ? NEG_HUGE_PHLOAT : POS_HUGE_PHLOAT;//avoid range error
+    } else {
+        if(pi) x = -x;//flip back
+    }
+    v = new_real(x);
+    if(v == NULL)
+        return ERR_INSUFFICIENT_MEMORY;
+    binary_result(v);
+    return ERR_NONE;
 }
 
 int docmd_varmenu(arg_struct *arg) {

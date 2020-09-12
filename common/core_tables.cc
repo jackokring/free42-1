@@ -443,7 +443,7 @@ static const command_spec cmd_array[] =
     { /* SDDX */        "SDDX",                 4, docmd_sddx,        0x0000a7f0, ARG_NONE,  FLAG_NONE },
     { /* RCSD */        "RCSD",                 4, docmd_rcsd,        0x0000a7f1, ARG_NONE,  FLAG_NONE },
     { /* ERF */         "ERF",                  3, docmd_erf,         0x0000a7f2, ARG_NONE,  FLAG_NONE },
-    { /* SRCL */        "SRCL",                 4, docmd_xrom,        0x0000a7f3, ARG_NONE,  FLAG_NONE },
+    { /* SRCL */        "GIN",                  3, docmd_gin,         0x0000a7f3, ARG_NONE,  FLAG_NONE },
     
     { /* SRCL */        "SRCL",                 4, docmd_xrom,        0x0000a7f4, ARG_NONE,  FLAG_NONE },
     { /* SRCL */        "SRCL",                 4, docmd_xrom,        0x0000a7f5, ARG_NONE,  FLAG_NONE },
