@@ -1262,7 +1262,7 @@ int docmd_gin(arg_struct *arg) {
         return ERR_INVALID_TYPE;
     phloat x = ((vartype_real *)reg_x)->x;
     phloat y = ((vartype_real *)reg_y)->x;
-    vartype *v;
+    vartype *v, *i;
     phloat pi = 0;
     if(y < 0) {
         y = -y;
@@ -1273,11 +1273,21 @@ int docmd_gin(arg_struct *arg) {
     if (p_isinf(x)) {
         x = (x > 0) ? POS_HUGE_PHLOAT : NEG_HUGE_PHLOAT;//avoid range error
     }
-    if(pi != 0) x = x * cos(pi);//flip back real part
+    if(pi != 0) {
+        y = x * sin(pi);//i
+        x = x * cos(pi);//flip back real part
+    }
     v = new_real(x);
     if(v == NULL)
         return ERR_INSUFFICIENT_MEMORY;
-    binary_result(v);
+    i = new_real(y);
+    if(i == NULL) {
+        free_vartype(v);
+        return ERR_INSUFFICIENT_MEMORY;   
+    } 
+    free_vartype(reg_y);
+    reg_y = i;
+    unary_result(v);
     return ERR_NONE;
 }
 
